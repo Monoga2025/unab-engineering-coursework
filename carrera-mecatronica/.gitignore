@@ -1,0 +1,31 @@
+# Large binaries, CAD and videos
+*.rar
+*.zip
+*.mp4
+*.obj
+*.SLDASM
+*.sldasm
+*.SLDPRT
+*.sldprt
+*.IGS
+*.iges
+*.STEP
+*.step
+*.f3d
+
+# Heavy course folders not part of the web study guide
+Dibujo/
+SolidWorks_Modelos/
+Mecanica_Ejercicios/
+Ondas_Particulas/waves-*.png
+Circuitos_Electricos/circuits-*.png
+Circuitos_Electricos/*contact*
+__pycache__/
+
+# Keep individual crops for web notebook
+!Herramientas_web/tmp/pdfs/individual/
+!Herramientas_web/tmp/pdfs/individual/*.png
+
+# Local folder icons (Windows only)
+desktop.ini
+carpeta.ico

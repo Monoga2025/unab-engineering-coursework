@@ -1,0 +1,106 @@
+{
+  "status": "failed",
+  "files": [
+    {
+      "file": "renders\\01_MODELO_GENERAL.mp4",
+      "expected_seconds": 12,
+      "status": "failed"
+    },
+    {
+      "file": "renders\\02_GINEBRA_CLOSEUP.mp4",
+      "expected_seconds": 15,
+      "status": "failed"
+    },
+    {
+      "file": "renders\\03_GINEBRA_TOP.mp4",
+      "expected_seconds": 12,
+      "status": "failed"
+    },
+    {
+      "file": "renders\\04_60RPM_TIMELINE.mp4",
+      "expected_seconds": 6,
+      "status": "failed"
+    },
+    {
+      "file": "renders\\05_INDEXACION_90_GRADOS.mp4",
+      "expected_seconds": 12,
+      "status": "failed"
+    },
+    {
+      "file": "renders\\06_BANDA_FUNCIONANDO.mp4",
+      "expected_seconds": 15,
+      "status": "failed"
+    },
+    {
+      "file": "renders\\07_AMBIENTACION_FABRICA.mp4",
+      "expected_seconds": 15,
+      "status": "failed"
+    },
+    {
+      "file": "renders\\08_MECANISMO_AISLADO.mp4",
+      "expected_seconds": 10,
+      "status": "failed"
+    },
+    {
+      "file": "renders\\09_COMPONENTES.mp4",
+      "expected_seconds": 10,
+      "status": "failed"
+    },
+    {
+      "file": "renders\\10_FINAL_CINEMATIC.mp4",
+      "expected_seconds": 15,
+      "status": "failed"
+    },
+    {
+      "file": "capturas\\01_general.png",
+      "status": "failed"
+    },
+    {
+      "file": "capturas\\02_geneva_pin_entry.png",
+      "status": "failed"
+    },
+    {
+      "file": "capturas\\03_geneva_moving.png",
+      "status": "failed"
+    },
+    {
+      "file": "capturas\\04_geneva_rest.png",
+      "status": "failed"
+    },
+    {
+      "file": "capturas\\05_conveyor.png",
+      "status": "failed"
+    },
+    {
+      "file": "capturas\\06_60rpm.png",
+      "status": "failed"
+    },
+    {
+      "file": "capturas\\07_top_view.png",
+      "status": "failed"
+    }
+  ],
+  "errors": [
+    "01_MODELO_GENERAL.mp4: missing",
+    "02_GINEBRA_CLOSEUP.mp4: missing",
+    "03_GINEBRA_TOP.mp4: missing",
+    "04_60RPM_TIMELINE.mp4: missing",
+    "05_INDEXACION_90_GRADOS.mp4: missing",
+    "06_BANDA_FUNCIONANDO.mp4: missing",
+    "07_AMBIENTACION_FABRICA.mp4: missing",
+    "08_MECANISMO_AISLADO.mp4: missing",
+    "09_COMPONENTES.mp4: missing",
+    "10_FINAL_CINEMATIC.mp4: missing",
+    "01_general.png: [Errno 2] No such file or directory: 'C:\\\\Users\\\\Monoga\\\\Desktop\\\\Monoga OS\\\\04_UNAB_INGENIERIA\\\\Carrera_Mecatronica\\\\Mecanismos\\\\Cruz Mecanismo\\\\Cruz Mecanismo\\\\Codex Blender\\\\capturas\\\\01_general.png'",
+    "02_geneva_pin_entry.png: [Errno 2] No such file or directory: 'C:\\\\Users\\\\Monoga\\\\Desktop\\\\Monoga OS\\\\04_UNAB_INGENIERIA\\\\Carrera_Mecatronica\\\\Mecanismos\\\\Cruz Mecanismo\\\\Cruz Mecanismo\\\\Codex Blender\\\\capturas\\\\02_geneva_pin_entry.png'",
+    "03_geneva_moving.png: [Errno 2] No such file or directory: 'C:\\\\Users\\\\Monoga\\\\Desktop\\\\Monoga OS\\\\04_UNAB_INGENIERIA\\\\Carrera_Mecatronica\\\\Mecanismos\\\\Cruz Mecanismo\\\\Cruz Mecanismo\\\\Codex Blender\\\\capturas\\\\03_geneva_moving.png'",
+    "04_geneva_rest.png: [Errno 2] No such file or directory: 'C:\\\\Users\\\\Monoga\\\\Desktop\\\\Monoga OS\\\\04_UNAB_INGENIERIA\\\\Carrera_Mecatronica\\\\Mecanismos\\\\Cruz Mecanismo\\\\Cruz Mecanismo\\\\Codex Blender\\\\capturas\\\\04_geneva_rest.png'",
+    "05_conveyor.png: [Errno 2] No such file or directory: 'C:\\\\Users\\\\Monoga\\\\Desktop\\\\Monoga OS\\\\04_UNAB_INGENIERIA\\\\Carrera_Mecatronica\\\\Mecanismos\\\\Cruz Mecanismo\\\\Cruz Mecanismo\\\\Codex Blender\\\\capturas\\\\05_conveyor.png'",
+    "06_60rpm.png: [Errno 2] No such file or directory: 'C:\\\\Users\\\\Monoga\\\\Desktop\\\\Monoga OS\\\\04_UNAB_INGENIERIA\\\\Carrera_Mecatronica\\\\Mecanismos\\\\Cruz Mecanismo\\\\Cruz Mecanismo\\\\Codex Blender\\\\capturas\\\\06_60rpm.png'",
+    "07_top_view.png: [Errno 2] No such file or directory: 'C:\\\\Users\\\\Monoga\\\\Desktop\\\\Monoga OS\\\\04_UNAB_INGENIERIA\\\\Carrera_Mecatronica\\\\Mecanismos\\\\Cruz Mecanismo\\\\Cruz Mecanismo\\\\Codex Blender\\\\capturas\\\\07_top_view.png'",
+    "GENEVA_CONVEYOR_PROJECT.blend: missing or empty"
+  ],
+  "expected_video_frames": 3660,
+  "expected_total_seconds": 122,
+  "note": "Media integrity does not replace visual/kinematic inspection."
+}

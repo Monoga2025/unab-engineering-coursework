@@ -1,0 +1,63 @@
+{
+  "status": "passed",
+  "rpm": 60,
+  "slots": 4,
+  "checks": {
+    "output_matches_analytic_curve": {
+      "max_rad_error": 2.3462547638075648e-07,
+      "samples": 481
+    },
+    "input_is_exact_60rpm": {
+      "max_rad_error": 9.466378365630135e-07
+    },
+    "pin_stays_in_slot_centerline": {
+      "max_distance_error": 5.992366461649024e-07
+    },
+    "four_turns_equal_full_output_turn": {
+      "output_degrees_after_four_turns": -360.00001001791264
+    },
+    "dwell_0_0.37": {
+      "rotation_change_rad": 8.881818078319142e-17
+    },
+    "dwell_0.63_1": {
+      "rotation_change_rad": 0.0
+    },
+    "no_pin_or_lock_surface_penetration": {
+      "intersections": []
+    },
+    "requested_collections": {
+      "collections": [
+        "01_GENEVA",
+        "02_CONVEYOR",
+        "03_STRUCTURE",
+        "04_PRODUCTS",
+        "05_FACTORY",
+        "06_LIGHTS",
+        "07_CAMERAS"
+      ]
+    },
+    "roller_is_synchronized_1_to_1": {
+      "max_error_rad": 0.0
+    },
+    "product_displacement_matches_roller_arc": {
+      "max_error_scene_units": 8.58324723726489e-08,
+      "pitch_scene_units": 0.45553093477052
+    },
+    "inspection_head_retracted_during_index": {
+      "maximum_stroke_during_motion": 7.629394538355427e-08
+    },
+    "ten_cameras": {
+      "camera_count": 10
+    },
+    "at_least_four_products": {
+      "product_count": 12
+    }
+  },
+  "errors": [],
+  "resolution": [
+    1920,
+    1080
+  ],
+  "fps": 30.0,
+  "note": "Checks evaluated the reopened .blend with script auto-execution disabled."
+}

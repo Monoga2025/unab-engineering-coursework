@@ -1,0 +1,18 @@
+{
+  "state": "running",
+  "started_at": "2026-10-01T00:43:30-05:00",
+  "samples": 8,
+  "resolution": "1920x1080",
+  "fps": 30,
+  "completed": [
+    {
+      "file": "02_GINEBRA_CLOSEUP.mp4",
+      "render_seconds": 555.74
+    }
+  ],
+  "skipped": [
+    "01_MODELO_GENERAL.mp4"
+  ],
+  "current": "03_GINEBRA_TOP.mp4",
+  "current_started_at": "2026-10-01T00:52:46-05:00"
+}

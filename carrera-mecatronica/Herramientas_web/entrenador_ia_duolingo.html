@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎮 Entrenador IA — Aprende a Elegir Fórmulas sin Complicaciones</title>
+  
+  <!-- MathJax 3 -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      chtml: { scale: 1.05 },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(19, 26, 43, 0.95);
+      --card-border: rgba(56, 189, 248, 0.18);
+      --accent-green: #22c55e;
+      --accent-green-bg: rgba(34, 197, 94, 0.15);
+      --accent-green-glow: rgba(34, 197, 94, 0.4);
+      --accent-blue: #38bdf8;
+      --accent-purple: #a855f7;
+      --accent-yellow: #fbbf24;
+      --accent-red: #ef4444;
+      --accent-red-bg: rgba(239, 68, 68, 0.15);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.08) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(34, 197, 94, 0.04) 0px, transparent 70%);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    /* Top HUD / Gamification Bar */
+    .hud-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(9, 13, 22, 0.92);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .hud-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hud-badge {
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      color: #04131a;
+      font-weight: 800;
+      font-size: 0.8rem;
+      padding: 5px 10px;
+      border-radius: 8px;
+    }
+    .progress-track {
+      width: 200px;
+      height: 10px;
+      background: #1e293b;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #38bdf8);
+      border-radius: 5px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    @media (max-width: 600px) {
+      .progress-track { width: 90px; }
+    }
+
+    .hud-stats {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .stat-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+    .stat-streak { color: #f97316; }
+    .stat-xp { color: #fbbf24; }
+    .stat-hearts { color: #ef4444; }
+
+    /* Main Container */
+    .main-container {
+      flex: 1;
+      max-width: 820px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px 20px 140px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* AI Coach Speech Bubble */
+    .coach-bubble {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-left: 4px solid var(--accent-purple);
+      border-radius: 14px;
+      padding: 12px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+    .coach-content {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: #e2e8f0;
+      line-height: 1.45;
+    }
+    .coach-avatar {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    .retry-badge {
+      background: #dc2626;
+      color: white;
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    /* Exercise Main Card */
+    .exercise-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 26px 24px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+      margin-bottom: 20px;
+    }
+    .ex-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .ex-topic-tag {
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--accent-blue);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .ex-id-tag {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+
+    .ex-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.4;
+      margin-bottom: 14px;
+    }
+
+    .ex-scenario {
+      background: #0d131f;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 16px 18px;
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      line-height: 1.55;
+      margin-bottom: 22px;
+    }
+    .ex-scenario strong {
+      color: var(--accent-yellow);
+    }
+    .ex-clue-highlight {
+      display: inline-block;
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      color: #fef08a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .click-prompt {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Instant Choice Cards */
+    .choices-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .choice-card {
+      background: rgba(30, 41, 59, 0.7);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .choice-card:hover {
+      background: rgba(51, 65, 85, 0.85);
+      border-color: var(--accent-blue);
+      transform: translateY(-2px);
+    }
+    .choice-card:active {
+      transform: scale(0.98);
+    }
+
+    /* Evaluation States (Instant on click) */
+    .choice-card.answered-correct {
+      background: var(--accent-green-bg) !important;
+      border-color: var(--accent-green) !important;
+      box-shadow: 0 0 20px var(--accent-green-glow);
+    }
+    .choice-card.answered-wrong {
+      background: var(--accent-red-bg) !important;
+      border-color: var(--accent-red) !important;
+      opacity: 0.7;
+    }
+    .choice-card.disabled {
+      pointer-events: none;
+    }
+
+    .choice-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .choice-intent-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .choice-card.answered-correct .choice-intent-label { color: #4ade80; }
+    .choice-card.answered-wrong .choice-intent-label { color: #f87171; }
+
+    .choice-math {
+      font-size: 1.15rem;
+      color: #ffffff;
+      padding: 4px 0;
+    }
+
+    /* Bottom Feedback Drawer (Duolingo Style) */
+    .feedback-drawer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 120;
+      padding: 22px 24px;
+      border-radius: 24px 24px 0 0;
+      display: none;
+      animation: slideUp 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.75);
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .feedback-drawer.correct {
+      background: #0b2617;
+      border-top: 3px solid var(--accent-green);
+    }
+    .feedback-drawer.wrong {
+      background: #2b0e13;
+      border-top: 3px solid var(--accent-red);
+    }
+    .feedback-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .fb-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .fb-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .feedback-drawer.correct .fb-title { color: #4ade80; }
+    .feedback-drawer.wrong .fb-title { color: #f87171; }
+
+    .fb-xp-pill {
+      font-size: 0.88rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+    .feedback-drawer.correct .fb-xp-pill { background: rgba(34,197,94,0.2); color: #4ade80; }
+    .feedback-drawer.wrong .fb-xp-pill { background: rgba(239,68,68,0.2); color: #f87171; }
+
+    /* Easy-to-understand explanation boxes */
+    .fb-simple-box {
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .fb-section-title {
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--accent-yellow);
+    }
+
+    .btn-next {
+      align-self: flex-end;
+      padding: 14px 36px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 1.05rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .feedback-drawer.correct .btn-next {
+      background: var(--accent-green);
+      color: #04131a;
+      box-shadow: 0 0 20px var(--accent-green-glow);
+    }
+    .feedback-drawer.wrong .btn-next {
+      background: var(--accent-red);
+      color: #fff;
+    }
+    .btn-next:hover {
+      transform: translateY(-2px) scale(1.02);
+    }
+
+    /* Navigation Links */
+    .top-nav-links {
+      display: flex;
+      gap: 10px;
+    }
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top HUD Bar -->
+  <header class="hud-bar">
+    <div class="hud-left">
+      <div class="hud-badge">🧠 IA ADAPTATIVA</div>
+      <div class="progress-track" title="Progreso en esta sesión">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+    <div class="hud-stats">
+      <div class="stat-pill stat-streak" title="Racha de aciertos a la primera">
+        <span>🔥</span> <span id="hudStreak">0</span>
+      </div>
+      <div class="stat-pill stat-xp" title="Puntos XP ganados">
+        <span>⚡</span> <span id="hudXP">0 XP</span>
+      </div>
+      <div class="stat-pill stat-hearts" title="Vidas">
+        <span>❤️</span> <span id="hudHearts">5</span>
+      </div>
+      <div class="top-nav-links">
+        <a href="laboratorio_interactivo.html" class="nav-btn">⚡ Simulador 2D</a>
+        <a href="index.html" class="nav-btn">📓 Cuaderno</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Training Stage -->
+  <main class="main-container">
+
+    <!-- AI Coach Speech Bubble -->
+    <div class="coach-bubble" id="coachBubble">
+      <div class="coach-content">
+        <span class="coach-avatar">🤖</span>
+        <span id="coachMessage">Toca directamente la fórmula correcta. Si te equivocas, te explico el porqué en palabras sencillas y te la vuelvo a poner en 2 turnos para que la aprendas de verdad.</span>
+      </div>
+      <span class="retry-badge" id="retryBadge" style="display:none;">🔁 REPASO REAGENDADO</span>
+    </div>
+
+    <!-- Exercise Card -->
+    <div class="exercise-card" id="exerciseCard">
+      <div class="ex-top-row">
+        <span class="ex-topic-tag" id="exTopicTag">🌊 Ondas en Cuerdas</span>
+        <span class="ex-id-tag" id="exIdTag">Prob 15.12</span>
+      </div>
+
+      <div class="ex-title" id="exTitle">
+        ¿Qué fórmula relaciona la velocidad de vibración vertical con la velocidad de la onda?
+      </div>
+
+      <div class="ex-scenario" id="exScenario">
+        <!-- Scenario text with highlighted clues -->
+      </div>
+
+      <div class="click-prompt">
+        <span>👇</span> Toca la fórmula que resuelve este ejercicio (evaluación instantánea):
+      </div>
+
+      <!-- 3 Instant Choice Cards -->
+      <div class="choices-list" id="choicesList">
+        <!-- Injected options -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Feedback Drawer (Duolingo Style) -->
+  <div class="feedback-drawer" id="feedbackDrawer">
+    <div class="feedback-wrap">
+      <div class="fb-title-row">
+        <div class="fb-title" id="fbTitle">
+          <span id="fbIcon">🎉</span> <span id="fbTitleText">¡Correcto a la primera!</span>
+        </div>
+        <div class="fb-xp-pill" id="fbXpPill">+15 XP Ganados</div>
+      </div>
+
+      <div class="fb-simple-box">
+        <div>
+          <span class="fb-section-title">🔍 PISTA CLAVE DEL ENUNCIADO:</span>
+          <p id="fbClueText" style="margin-top:2px; color:#fef08a; font-weight:600;"></p>
+        </div>
+        <div>
+          <span class="fb-section-title">💡 EXPLICACIÓN SENCILLA:</span>
+          <p id="fbExplanationText" style="margin-top:2px;"></p>
+        </div>
+        <div id="fbTrapBox" style="display:none;">
+          <span class="fb-section-title" style="color:#f87171;">❌ POR QUÉ LA OTRA FÓRMULA NO APLICA AQUÍ:</span>
+          <p id="fbTrapText" style="margin-top:2px; color:#fca5a5;"></p>
+        </div>
+      </div>
+
+      <button class="btn-next" id="btnNext" onclick="onNextExerciseClicked()">
+        CONTINUAR →
+      </button>
+    </div>
+  </div>
+
+  <!-- Audio Synthesizer for instant game sounds -->
+  <script>
+    let audioCtx = null;
+    function playChime(isCorrect) {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+
+        if (isCorrect) {
+          // Happy 2-tone chime
+          osc.frequency.setValueAtTime(523.25, now); // C5
+          osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } else {
+          // Low error tone
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(220, now); // A3
+          osc.frequency.setValueAtTime(160, now + 0.12);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+          osc.start(now);
+          osc.stop(now + 0.4);
+        }
+      } catch(e) {}
+    }
+  </script>
+
+  <!-- Complete Exercise Bank with Easy Human Explanations -->
+  <script>
+    const EXERCISES = [
+      {
+        id: "15.12",
+        topicName: "🌊 Ondas & Cuerdas",
+        title: "¿Qué fórmula usar cuando te piden comparar qué tan rápido vibra un punto vertical ($v_y$) con la rapidez de la onda ($v$)?",
+        scenario: "Dada la ecuación $y = A\\cos(kx - \\omega t)$, queremos que la <span class='ex-clue-highlight'>velocidad máxima de vibración de las partículas</span> sea igual a la rapidez con la que viaja la onda hacia adelante.",
+        clue: "La clave es: La onda viaja a rapidez constante $v$, pero las partículas de la cuerda suben y bajan con velocidad que cambia todo el tiempo derivando en $t$.",
+        options: [
+          {
+            intent: "Fórmula de velocidad de partícula (Derivada en tiempo)",
+            math: "v_{y,\\max} = \\omega A = \\left(\\frac{2\\pi v}{\\lambda}\\right) A \\implies A = \\frac{\\lambda}{2\\pi}",
+            isCorrect: true,
+            whyWrong: null,
+            easyExplanation: "Al derivar respecto al tiempo, la velocidad de vibración máxima es $\\omega A$. Como $\\omega = 2\\pi v / \\lambda$, al igualar ambas velocidades se cancela $v$ y te queda directamente la amplitud requerida."
+          },
+          {
+            intent: "Fórmula de Tensión por Masa Colgante",
+            math: "v = \\sqrt{\\frac{T}{\\mu}} \\implies T = mg",
+            isCorrect: false,
+            whyWrong: "Esa fórmula es para cuando te dan una cuerda con un bloque colgando para hallar la velocidad a la que viaja el pulso, pero aquí nadie está colgando masas.",
+            easyExplanation: null
+          },
+          {
+            intent: "Fórmula de Potencia Media de un motor",
+            math: "P_{\\mathrm{med}} = \\frac{1}{2}\\mu \\omega^2 A^2 v",
+            isCorrect: false,
+            whyWrong: "Esa fórmula calcula los Watts de energía transmitidos por segundo, no te dice la velocidad de vibración de los átomos de la cuerda.",
+            easyExplanation: null
+          }
+        ]
+      },
+      {
+        id: "15.44",
+        topicName: "🎸 Ondas Estacionarias",
+        title: "Una guitarra emite un sonido al aire: ¿Qué fórmula relaciona la cuerda con el aire?",
+        scenario: "Una cuerda fija produce el <span class='ex-clue-highlight'>segundo sobretono (n = 3)</span> y emite sonido al aire con longitud $\\lambda_{aire} = 3.35\\text{ cm}$. Queremos hallar la tensión $T$ de la cuerda.",
+        clue: "La clave mágica: La frecuencia 'f' en el aire y en la cuerda ES LA MISMA (el aire vibra al mismo ritmo que la cuerda).",
+        options: [
+          {
+            intent: "Frecuencia compartida + Armónico n=3 + Tensión",
+            math: "f = \\frac{v_{aire}}{\\lambda_{aire}}, \\quad \\lambda_3 = \\frac{2L}{3}, \\quad T = \\mu (f \\cdot \\lambda_3)^2",
+            isCorrect: true,
+            whyWrong: null,
+            easyExplanation: "1) Sacas la frecuencia con los datos del aire ($f = v_{aire}/\\lambda_{aire}$). 2) Como es el 3er armónico en cuerda fija, $\\lambda_{cuerda} = 2L/3$. 3) La rapidez en la cuerda es $v = f\\lambda$, y la tensión sale con $T = \\mu v^2$."
+          },
+          {
+            intent: "Fórmula de Resorte Oscilante",
+            math: "\\omega = \\sqrt{\\frac{k}{m}}, \\quad T = 2\\pi\\sqrt{\\frac{m}{k}}",
+            isCorrect: false,
+            whyWrong: "¡Cuidado! Esta fórmula es de un resorte con una masa metálica (M.A.S.), nada que ver con cuerdas de guitarra ni ondas en el aire.",
+            easyExplanation: null
+          },
+          {
+            intent: "Fórmula para cuerda con un extremo libre (Impares)",
+            math: "\\lambda_n = \\frac{4L}{n}, \\quad T = \\mu v^2",
+            isCorrect: false,
+            whyWrong: "El factor $4L/n$ es solo si un extremo estuviera suelto. Una cuerda de guitarra siempre está amarrada en ambos extremos ($2L/n$).",
+            easyExplanation: null
+          }
+        ]
+      },
+      {
+        id: "15.50",
+        topicName: "🌊 Lectura de Ecuación de Onda",
+        title: "Te dan $y(x,t) = A\\cos(kx - \\omega t)$: ¿Cómo sacas la rapidez $v$ y la frecuencia $f$?",
+        scenario: "En el parcial te dan números直接: $y = 0.05\\cos(4.0x - 12.0t)$. ¿Cómo calculas $f$ y la velocidad $v$ de la onda?",
+        clue: "Lo que acompaña a 'x' es siempre k ($2\\pi/\\lambda$). Lo que acompaña a 't' es siempre omega w ($2\\pi f$).",
+        options: [
+          {
+            intent: "Despeje directo de coeficientes angulares",
+            math: "f = \\frac{\\omega}{2\\pi}, \\quad \\lambda = \\frac{2\\pi}{k}, \\quad v = \\frac{\\omega}{k} = \\lambda f",
+            isCorrect: true,
+            whyWrong: null,
+            easyExplanation: "Como el número junto a la $t$ es $\\omega = 2\\pi f$, solo divides $\\omega / 2\\pi$ para tener los Hertz ($f$). Y la velocidad de avance es simplemente dividir $\\omega$ entre $k$."
+          },
+          {
+            intent: "Multiplicar k por omega",
+            math: "v = \\omega \\cdot k, \\quad f = 2\\pi \\omega",
+            isCorrect: false,
+            whyWrong: "Si multiplicas $\\omega \\cdot k$ las unidades te dan $\\text{rad}^2/(\\text{m}\\cdot\\text{s})$, lo cual es físicamente absurdo. La rapidez siempre es la división $\\omega / k$ (metros/segundo).",
+            easyExplanation: null
+          },
+          {
+            intent: "Fórmula de caída libre",
+            math: "v = \\sqrt{2gh}, \\quad t = \\sqrt{\\frac{2h}{g}}",
+            isCorrect: false,
+            whyWrong: "Esa es la fórmula de tirar una piedra desde un edificio (gravedad). Aquí tenemos una onda viajera en una cuerda.",
+            easyExplanation: null
+          }
+        ]
+      },
+      {
+        id: "15.41",
+        topicName: "⚖️ Masa Colgante",
+        title: "¿Qué fórmula usar cuando la tensión la produce un peso colgando?",
+        scenario: "Una cuerda horizontal pasa por una polea y en la punta cuelga una masa <span class='ex-clue-highlight'>M suspendida en reposo</span>. ¿Cuál es la rapidez de los pulsos en la cuerda?",
+        clue: "Si la masa está quieta colgando, la cuerda tiene que soportar exactamente su peso: T = M * g.",
+        options: [
+          {
+            intent: "Equilibrio estático + Rapidez en cuerda",
+            math: "T = M g \\implies v = \\sqrt{\\frac{T}{\\mu}} = \\sqrt{\\frac{Mg}{\\mu}}",
+            isCorrect: true,
+            whyWrong: null,
+            easyExplanation: "El peso de la masa ($Mg$) estira la cuerda creando la tensión $T$. Luego la onda viaja a $v = \\sqrt{T/\\mu}$."
+          },
+          {
+            intent: "Energía cinética de choque",
+            math: "T = \\frac{1}{2} M v^2 \\implies v = \\sqrt{\\frac{2T}{M}}",
+            isCorrect: false,
+            whyWrong: "Confundiste fuerza con energía: $\\frac{1}{2}Mv^2$ se mide en Joules (energía de movimiento), pero la tensión es una fuerza en Newtons ($Mg$).",
+            easyExplanation: null
+          },
+          {
+            intent: "Péndulo simple",
+            math: "T = 2\\pi\\sqrt{\\frac{L}{g}}",
+            isCorrect: false,
+            whyWrong: "Esa $T$ es el 'Periodo' (tiempo en segundos de balanceo de un péndulo), pero el problema te pide la 'Tensión' (fuerza en Newtons). ¡No confundas la letra T!",
+            easyExplanation: null
+          }
+        ]
+      },
+      {
+        id: "mas_p19",
+        topicName: "🌀 M.A.S. Masa-Resorte",
+        title: "Masa conectada a un resorte: ¿Cómo hallar cuánto tarda en dar una oscilación completa ($T$)?",
+        scenario: "Un bloque de masa $m=0.5\\text{ kg}$ se mueve en una superficie sin fricción atado a un resorte de rigidez <span class='ex-clue-highlight'>k = 200 N/m</span>.",
+        clue: "En resortes: Rigidez 'k' va arriba en la frecuencia angular w = √(k/m). El periodo es el tiempo de 1 vuelta completa.",
+        options: [
+          {
+            intent: "Fórmula universal de Oscilador Masa-Resorte",
+            math: "\\omega = \\sqrt{\\frac{k}{m}}, \\quad T = \\frac{2\\pi}{\\omega} = 2\\pi \\sqrt{\\frac{m}{k}}",
+            isCorrect: true,
+            whyWrong: null,
+            easyExplanation: "La rigidez $k$ intenta regresar la masa al centro y la masa $m$ le hace resistencia por inercia. Por eso $\\omega = \\sqrt{k/m}$ y el periodo es $T = 2\\pi\\sqrt{m/k}$."
+          },
+          {
+            intent: "Fórmula de Péndulo con Gravedad",
+            math: "\\omega = \\sqrt{\\frac{g}{L}}, \\quad T = 2\\pi \\sqrt{\\frac{L}{g}}",
+            isCorrect: false,
+            whyWrong: "Esta fórmula es para un péndulo colgado del techo oscilando por gravedad ($g$), pero este ejercicio es un resorte horizontal donde la gravedad no influye.",
+            easyExplanation: null
+          },
+          {
+            intent: "Fórmula de Onda en Cuerda",
+            math: "v = \\sqrt{\\frac{T_{tension}}{\\mu}}, \\quad f = \\frac{v}{\\lambda}",
+            isCorrect: false,
+            whyWrong: "Aquí no hay ninguna cuerda vibrando ni ondas viajando; es un solo bloque que va y viene en el mismo lugar (M.A.S.).",
+            easyExplanation: null
+          }
+        ]
+      },
+      {
+        id: "mas_p20",
+        topicName: "⚡ Energía en M.A.S.",
+        title: "Te piden la velocidad del bloque cuando pasa por una posición intermedia $x$:",
+        scenario: "Un resorte se estiró hasta una amplitud $A$. ¿Cómo sacas la <span class='ex-clue-highlight'>velocidad en cualquier punto x</span> sin saber el tiempo?",
+        clue: "Usa Conservación de la Energía: La energía total en el extremo (1/2*k*A^2) se reparte entre cinética (1/2*m*v^2) y elástica (1/2*k*x^2).",
+        options: [
+          {
+            intent: "Conservación de Energía Mecánica Total",
+            math: "\\frac{1}{2} k A^2 = \\frac{1}{2} m v^2 + \\frac{1}{2} k x^2 \\implies v = \\pm \\omega \\sqrt{A^2 - x^2}",
+            isCorrect: true,
+            whyWrong: null,
+            easyExplanation: "Toda la energía que le diste al estirarlo ($E_{tot} = \\frac{1}{2}kA^2$) se conserva. Al restarle la energía que aún le queda al resorte en la posición $x$, lo que sobra es pura velocidad cinética."
+          },
+          {
+            intent: "Cinemática con tiempo",
+            math: "v = -\\omega A \\sin(\\omega t)",
+            isCorrect: false,
+            whyWrong: "Esa fórmula sirve si te dan el reloj en segundos ($t$), pero si el problema te da la distancia en centímetros ($x$), te obligaría a calcular el tiempo primero innecesariamente.",
+            easyExplanation: null
+          },
+          {
+            intent: "Trabajo por fricción",
+            math: "W = \\mu_k N d = \\mu_k m g d",
+            isCorrect: false,
+            whyWrong: "El enunciado aclara que no hay fricción; la energía se conserva al 100% sin pérdidas térmicas.",
+            easyExplanation: null
+          }
+        ]
+      },
+      {
+        id: "circ_01",
+        topicName: "🔌 Análisis Nodal (Nodos)",
+        title: "¿Cómo plantear la Ley de Corrientes de Kirchhoff (LCK) en un nodo desconocido $V_1$?",
+        scenario: "En el circuito tienes el nodo superior $V_1$ conectado a dos fuentes de voltaje $V_{s1}$ y $V_{s2}$ a través de varios resistores.",
+        clue: "Regla de oro: 'Corriente = (Voltaje del nodo - Voltaje del vecino) / Resistencia'. La suma de todas las ramas salientes debe dar 0.",
+        options: [
+          {
+            intent: "Ecuación Nodal Estándar (LCK sumatoria salientes)",
+            math: "\\sum I_{\\text{salientes}} = 0 \\implies \\frac{V_1 - V_{s1}}{R_1} + \\frac{V_1 - V_{s2}}{R_2} + \\frac{V_1 - 0}{R_3} = 0",
+            isCorrect: true,
+            whyWrong: null,
+            easyExplanation: "Por la Ley de Ohm, la corriente que se va por cada cable es la diferencia de potencial dividida por la resistencia. Al sumarlas e igualar a 0, despejas $V_1$ de inmediato."
+          },
+          {
+            intent: "Ley de Mallas de Kirchhoff (LVK)",
+            math: "\\sum V = 0 \\implies -V_{s1} + R_1 I_1 + R_2(I_1 - I_2) = 0",
+            isCorrect: false,
+            whyWrong: "Esa es la ley de MALLAS (dar vueltas en círculos sumando voltajes), pero para análisis NODAL siempre se trabaja con los voltajes de los puntos divididos entre resistencias.",
+            easyExplanation: null
+          },
+          {
+            intent: "Divisor de Voltaje Simple",
+            math: "V_1 = V_{s1} \\left(\\frac{R_2}{R_1 + R_2}\\right)",
+            isCorrect: false,
+            whyWrong: "El divisor simple solo sirve si hay 1 sola fuente y 2 resistencias en serie pura. Con múltiples fuentes cruzadas da un resultado completamente falso.",
+            easyExplanation: null
+          }
+        ]
+      }
+    ];
+
+    /* ========================================================================= */
+    /* LEARNING STATE & SPATIAL REPETITION QUEUE                                 */
+    /* ========================================================================= */
+    let sessionQueue = [];       // Queue of exercise objects
+    let currentQueueIdx = 0;
+    let streak = 0;
+    let xp = 0;
+    let hearts = 5;
+    let answeredCurrent = false;
+
+    // Load or initialize
+    function initSession() {
+      // Clone exercises into active queue
+      sessionQueue = [...EXERCISES].sort(() => Math.random() - 0.5);
+      currentQueueIdx = 0;
+      updateHUD();
+      loadCurrentQuestion();
+    }
+
+    function updateHUD() {
+      document.getElementById('hudStreak').textContent = streak;
+      document.getElementById('hudXP').textContent = xp + " XP";
+      document.getElementById('hudHearts').textContent = hearts;
+      
+      const percent = Math.min(100, (currentQueueIdx / sessionQueue.length) * 100);
+      document.getElementById('progressFill').style.width = percent + '%';
+    }
+
+    function loadCurrentQuestion() {
+      if (currentQueueIdx >= sessionQueue.length) {
+        // Queue finished!
+        showCompletionScreen();
+        return;
+      }
+
+      answeredCurrent = false;
+      const ex = sessionQueue[currentQueueIdx];
+
+      // Hide feedback drawer
+      document.getElementById('feedbackDrawer').style.display = 'none';
+
+      // Check if this is a retry
+      const retryBadge = document.getElementById('retryBadge');
+      if (ex.isRetry) {
+        retryBadge.style.display = 'block';
+        document.getElementById('coachMessage').innerHTML = `🔄 <strong>Pregunta reagendada:</strong> Veamos si ahora deduces la fórmula correcta por lógica.`;
+      } else {
+        retryBadge.style.display = 'none';
+        document.getElementById('coachMessage').innerHTML = `Toca directamente la fórmula que usarías en el parcial. <strong>¡Evaluación instantánea!</strong>`;
+      }
+
+      document.getElementById('exTopicTag').textContent = ex.topicName;
+      document.getElementById('exIdTag').textContent = `Ejercicio: ${ex.id}`;
+      document.getElementById('exTitle').innerHTML = ex.title;
+      document.getElementById('exScenario').innerHTML = ex.scenario;
+
+      // Render 3 options (shuffled)
+      const listContainer = document.getElementById('choicesList');
+      listContainer.innerHTML = '';
+
+      const shuffled = ex.options.map((opt, i) => ({ ...opt, origIdx: i })).sort(() => Math.random() - 0.5);
+
+      shuffled.forEach((opt, idx) => {
+        const card = document.createElement('div');
+        card.className = 'choice-card';
+        card.onclick = () => onSelectOption(opt, card, ex);
+        card.innerHTML = `
+          <div class="choice-header">
+            <span class="choice-intent-label">Opción ${idx + 1}: ${opt.intent}</span>
+            <span style="font-size:0.75rem; color:var(--text-muted);">Toca para elegir</span>
+          </div>
+          <div class="choice-math">$${opt.math}$</div>
+        `;
+        listContainer.appendChild(card);
+      });
+
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise(['#exTitle', '#exScenario', '#choicesList']);
+      }
+    }
+
+    /* ========================================================================= */
+    /* INSTANT CLICK EVALUATION & SPATIAL REPETITION LOGIC                       */
+    /* ========================================================================= */
+    function onSelectOption(opt, cardElem, ex) {
+      if (answeredCurrent) return; // prevent multiple clicks
+      answeredCurrent = true;
+
+      // Disable all cards
+      document.querySelectorAll('.choice-card').forEach(c => c.classList.add('disabled'));
+
+      const isCorrect = opt.isCorrect;
+      playChime(isCorrect);
+
+      const drawer = document.getElementById('feedbackDrawer');
+      const fbTitleText = document.getElementById('fbTitleText');
+      const fbIcon = document.getElementById('fbIcon');
+      const fbXpPill = document.getElementById('fbXpPill');
+      const fbClueText = document.getElementById('fbClueText');
+      const fbExplanationText = document.getElementById('fbExplanationText');
+      const fbTrapBox = document.getElementById('fbTrapBox');
+      const fbTrapText = document.getElementById('fbTrapText');
+
+      fbClueText.innerHTML = ex.clue;
+
+      if (isCorrect) {
+        // CORRECT ANSWER
+        cardElem.classList.add('answered-correct');
+        drawer.className = 'feedback-drawer correct';
+        fbIcon.textContent = '🎉';
+
+        if (ex.isRetry) {
+          // It was a retry after mistake: Give small recovery XP, don't give full first-try streak
+          fbTitleText.textContent = "¡Bien hecho! Ya dominas este error.";
+          fbXpPill.textContent = "+5 XP (Recuperado)";
+          xp += 5;
+        } else {
+          // Pure clean first-try success!
+          fbTitleText.textContent = "¡Fórmula Correcta a la Primera!";
+          fbXpPill.textContent = "+15 XP Ganados";
+          xp += 15;
+          streak += 1;
+          if (typeof confetti === 'function') {
+            confetti({ particleCount: 50, spread: 60, origin: { y: 0.85 } });
+          }
+        }
+
+        // Find the correct explanation
+        const correctOpt = ex.options.find(o => o.isCorrect);
+        fbExplanationText.innerHTML = correctOpt.easyExplanation || "¡Elegiste la fórmula exacta para resolver este tipo de incógnitas!";
+        fbTrapBox.style.display = 'none';
+
+      } else {
+        // WRONG ANSWER
+        cardElem.classList.add('answered-wrong');
+        drawer.className = 'feedback-drawer wrong';
+        fbIcon.textContent = '❌';
+        fbTitleText.textContent = "Fórmula Incorrecta (Cero puntos)";
+        fbXpPill.textContent = "+0 XP | Racha rota";
+        
+        streak = 0;
+        hearts = Math.max(0, hearts - 1);
+
+        const correctOpt = ex.options.find(o => o.isCorrect);
+        fbExplanationText.innerHTML = `La fórmula que debías usar era: <strong style="color:#4ade80;">$${correctOpt.math}$</strong>. ${correctOpt.easyExplanation}`;
+        
+        fbTrapBox.style.display = 'block';
+        fbTrapText.innerHTML = opt.whyWrong || "Esa fórmula no calcula la variable que pide el problema.";
+
+        // REAGENDAMIENTO INTELIGENTE: Mandar al final o aleatoriamente lejos para evitar memoria a corto plazo
+        const retryExercise = { ...ex, isRetry: true };
+        const minDistance = 4;
+        const remainingSlots = sessionQueue.length - (currentQueueIdx + minDistance);
+        if (remainingSlots > 0) {
+          const randomPos = currentQueueIdx + minDistance + Math.floor(Math.random() * remainingSlots);
+          sessionQueue.splice(randomPos, 0, retryExercise);
+        } else {
+          sessionQueue.push(retryExercise); // Directo al final de la sesión
+        }
+      }
+
+      updateHUD();
+      drawer.style.display = 'block';
+
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise(['#fbExplanationText', '#fbTrapText']);
+      }
+    }
+
+    function onNextExerciseClicked() {
+      currentQueueIdx++;
+      updateHUD();
+      loadCurrentQuestion();
+    }
+
+    function showCompletionScreen() {
+      const card = document.getElementById('exerciseCard');
+      card.innerHTML = `
+        <div style="text-align:center; padding: 30px 10px;">
+          <div style="font-size:3.5rem; margin-bottom:12px;">🏆</div>
+          <h2 style="font-size:1.8rem; color:#4ade80; margin-bottom:10px;">¡Sesión Completada con Éxito!</h2>
+          <p style="font-size:1rem; color:#cbd5e1; margin-bottom:20px; line-height:1.6;">
+            Has resuelto todos los ejercicios y repasado los errores reagendados. Tu memoria de reconocimiento de fórmulas está lista para el parcial.
+          </p>
+          <div style="display:inline-flex; gap:20px; background:#0f172a; padding:14px 24px; border-radius:12px; margin-bottom:24px;">
+            <div><span style="color:#fbbf24; font-weight:800; font-size:1.3rem;">${xp}</span> <span style="font-size:0.85rem; color:#94a3b8;">Total XP</span></div>
+            <div><span style="color:#f97316; font-weight:800; font-size:1.3rem;">${streak}</span> <span style="font-size:0.85rem; color:#94a3b8;">Mejor Racha</span></div>
+          </div>
+          <br>
+          <button onclick="initSession()" style="background:var(--accent-green); color:#04131a; border:none; padding:14px 30px; border-radius:12px; font-weight:800; font-size:1rem; cursor:pointer;">
+            🔄 REPETIR SESIÓN DE ENTRENAMIENTO
+          </button>
+        </div>
+      `;
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 100, spread: 100, origin: { y: 0.6 } });
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initSession();
+    });
+  </script>
+</body>
+</html>

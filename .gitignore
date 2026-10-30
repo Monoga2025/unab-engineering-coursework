@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pdf
+*.rar
+*.zip
+*.mp4
+*.log
+.env
+.env.*
+!.env.example
+*.lnk
+desktop.ini
+carpeta.ico

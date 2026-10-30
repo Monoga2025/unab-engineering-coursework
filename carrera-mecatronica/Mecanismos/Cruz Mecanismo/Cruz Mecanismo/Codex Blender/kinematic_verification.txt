@@ -1,0 +1,5 @@
+Analytic verification PASSED
+60 RPM = 1 revolution/second
+4 slots; 90 degrees per cycle; 75% dwell; 25% engagement
+Maximum pin/slot collinearity residual: 3.691e-08 m
+Verified 16 cycles and 251 engagement samples.

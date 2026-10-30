@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ Laboratorio Visual Interactivo — Física & Mecatrónica</title>
+  
+  <!-- MathJax 3 -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      chtml: { scale: 1.0 },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+  <style>
+    :root {
+      --bg: #07090e;
+      --card-bg: rgba(18, 24, 38, 0.88);
+      --card-border: rgba(56, 189, 248, 0.18);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-rose: #f43f5e;
+      --accent-purple: #c084fc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(192, 132, 252, 0.08) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(52, 211, 153, 0.04) 0px, transparent 70%);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    /* Top Navigation */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(7, 9, 14, 0.85);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: white;
+    }
+    .brand-badge {
+      background: linear-gradient(135deg, #0284c7, #818cf8);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.35);
+    }
+    .brand-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: -0.3px;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--accent-cyan);
+      transform: translateY(-1px);
+    }
+    .nav-btn.primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      border: none;
+      box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1420px;
+      margin: 0 auto;
+      padding: 20px 20px;
+    }
+
+    /* Tab Switcher */
+    .tabs-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 6px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      overflow-x: auto;
+    }
+    .tab-btn {
+      flex: 1;
+      min-width: 160px;
+      padding: 12px 18px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+    }
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .tab-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
+    }
+
+    /* CONCEPT EXPLORER QUESTIONS BAR */
+    .concept-questions-bar {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .cq-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .cq-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #e2e8f0;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .cq-btn:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .cq-btn.active {
+      background: var(--accent-cyan);
+      color: #04121d;
+      border-color: var(--accent-cyan);
+      font-weight: 700;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
+
+    /* Live Interactive Explanation Callout Box */
+    .live-explainer-card {
+      background: linear-gradient(135deg, rgba(14, 116, 144, 0.15), rgba(15, 23, 42, 0.9));
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-left: 5px solid var(--accent-cyan);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+      animation: pulseGlow 4s infinite alternate;
+    }
+    @keyframes pulseGlow {
+      from { border-left-color: var(--accent-cyan); }
+      to { border-left-color: var(--accent-purple); }
+    }
+    .lec-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: var(--accent-cyan);
+    }
+    .lec-body {
+      font-size: 0.94rem;
+      color: #f1f5f9;
+      line-height: 1.55;
+    }
+    .lec-body strong {
+      color: var(--accent-amber);
+    }
+
+    /* Grid Layout */
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr 390px;
+      gap: 22px;
+    }
+    @media (max-width: 1100px) {
+      .sim-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Simulation Canvas Card */
+    .canvas-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    .canvas-header {
+      padding: 14px 20px;
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .canvas-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .canvas-badge {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-live { background: rgba(52, 211, 153, 0.2); color: var(--accent-emerald); border: 1px solid rgba(52, 211, 153, 0.4); }
+
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      height: 420px;
+      background: #080c14;
+      cursor: crosshair;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Overlay controls on canvas */
+    .canvas-overlay-ctrls {
+      position: absolute;
+      bottom: 12px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+    .overlay-pill {
+      pointer-events: auto;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+    .overlay-btn {
+      pointer-events: auto;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .overlay-btn:hover {
+      background: var(--accent-cyan);
+      color: #000;
+    }
+
+    /* Live Data Readouts Strip */
+    .data-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      background: rgba(10, 15, 26, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 12px 16px;
+      gap: 10px;
+    }
+    .data-item {
+      display: flex;
+      flex-direction: column;
+      padding: 6px 10px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 8px;
+      border-left: 3px solid var(--accent-cyan);
+    }
+    .data-name {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .data-value {
+      font-size: 1.15rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: #fff;
+      margin-top: 2px;
+    }
+    .data-unit {
+      font-size: 0.78rem;
+      color: var(--accent-cyan);
+      font-weight: 600;
+      margin-left: 3px;
+    }
+
+    /* Control Panel (Sidebar) */
+    .control-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .panel-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    .panel-box-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 10px;
+    }
+
+    /* Sliders */
+    .control-group {
+      margin-bottom: 16px;
+    }
+    .control-group:last-child {
+      margin-bottom: 0;
+    }
+    .control-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+    }
+    .control-label {
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .control-val-tag {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      padding: 2px 8px;
+      border-radius: 5px;
+      font-size: 0.85rem;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 4px;
+      background: #1e293b;
+      outline: none;
+      transition: background 0.2s;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.9);
+    }
+
+    /* Live Math Insights Box */
+    .formula-breakdown {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+    .formula-step {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+      font-size: 0.88rem;
+    }
+    .formula-step:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .formula-desc {
+      color: var(--text-muted);
+    }
+    .formula-math {
+      font-family: var(--font-mono);
+      color: var(--accent-emerald);
+      font-weight: 700;
+    }
+
+    /* Intuition Card */
+    .intuition-box {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(244, 63, 94, 0.05));
+      border: 1px solid rgba(251, 191, 36, 0.25);
+      border-left: 4px solid var(--accent-amber);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: #e2e8f0;
+      margin-top: 14px;
+    }
+    .intuition-title {
+      font-weight: 700;
+      color: var(--accent-amber);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Presets Chip list */
+    .preset-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: var(--font-mono);
+    }
+    .chip:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+      color: white;
+    }
+    .chip.active {
+      background: var(--accent-cyan);
+      color: #04121d;
+      border-color: var(--accent-cyan);
+      font-weight: 700;
+    }
+
+    /* Dynamic Visual Helpers (Energy bar, etc) */
+    .energy-bars-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .energy-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+    }
+    .energy-bar-label {
+      width: 75px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .energy-bar-track {
+      flex: 1;
+      height: 10px;
+      background: #1e293b;
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+    }
+    .energy-bar-fill {
+      height: 100%;
+      border-radius: 5px;
+      transition: width 0.05s linear;
+    }
+    .fill-kinetic { background: linear-gradient(90deg, #38bdf8, #2563eb); }
+    .fill-potential { background: linear-gradient(90deg, #fbbf24, #f97316); }
+    .fill-total { background: linear-gradient(90deg, #34d399, #059669); }
+
+    .sim-tab-content { display: none; }
+    .sim-tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Switch */
+    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider-toggle {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #334155; transition: .3s; border-radius: 24px;
+    }
+    .slider-toggle:before {
+      position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+      background-color: white; transition: .3s; border-radius: 50%;
+    }
+    input:checked + .slider-toggle { background-color: var(--accent-cyan); }
+    input:checked + .slider-toggle:before { transform: translateX(20px); }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <a href="#" class="brand">
+      <div class="brand-badge">⚡ LAB PRO</div>
+      <div class="brand-title">Laboratorio Visual Interactivo de Mecatrónica</div>
+    </a>
+    <div class="nav-actions">
+      <a href="entrenador_ia_duolingo.html" class="nav-btn" style="background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(6,182,212,0.2)); border-color: var(--accent-emerald); color:#34d399;">
+        <span>🎮 Entrenador IA (Duolingo)</span>
+      </a>
+      <button class="nav-btn" id="soundToggleBtn" onclick="toggleAudio()" title="Activar/Desactivar sintetizador sonoro">
+        <span id="soundIcon">🔇</span> <span id="soundText">Audio Desactivado</span>
+      </button>
+      <a href="index.html" class="nav-btn primary">
+        <span>📓 Ver Cuaderno Teórico</span>
+      </a>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Top Tab Selector -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" onclick="switchMainTab('waves')">
+        <span>🌊</span> Ondas, Cuerdas & Frecuencia Angular ($\omega$)
+      </button>
+      <button class="tab-btn" onclick="switchMainTab('mas')">
+        <span>⚡</span> Movimiento Armónico (MAS)
+      </button>
+      <button class="tab-btn" onclick="switchMainTab('circuits')">
+        <span>🔋</span> Circuitos & Mallas Eléctricas
+      </button>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TAB 1: ONDAS Y CUERDAS TENSAS                                      -->
+    <!-- ================================================================= -->
+    <div id="tab-waves" class="sim-tab-content active">
+
+      <!-- BOTONES DE RESPUESTA CONCEPTUAL DIRECTA DEL SISTEMA -->
+      <div class="concept-questions-bar">
+        <div class="cq-title">
+          <span>💡</span> Preguntas Clave:
+        </div>
+        <button class="cq-btn active" onclick="explainConcept('omega')">
+          <span>🔄</span> ¿Qué es $\omega$ (Frecuencia Angular)?
+        </button>
+        <button class="cq-btn" onclick="explainConcept('transversal')">
+          <span>↕️</span> ¿Por qué es "Transversal"?
+        </button>
+        <button class="cq-btn" onclick="explainConcept('freq_vs_speed')">
+          <span>⚡</span> Frecuencia ($f$) vs Velocidad ($v$): ¿Por qué NO son lo mismo?
+        </button>
+        <button class="cq-btn" onclick="explainConcept('why_more_waves')">
+          <span>🌊</span> ¿Por qué al subir $f$ se ven más ondas?
+        </button>
+      </div>
+
+      <!-- Live Dynamic Explanation Card (The System Explains Itself!) -->
+      <div class="live-explainer-card" id="liveExplainerBox">
+        <div class="lec-head">
+          <span id="lecTitle">🔄 EXPLICADOR DEL SISTEMA: ¿Qué es la Frecuencia Angular $\omega$?</span>
+          <span style="font-size:0.75rem; color:var(--text-muted);">Sincronizado con los controles</span>
+        </div>
+        <div class="lec-body" id="lecText">
+          Mira el <strong>círculo giratorio de la izquierda</strong>: $\omega$ mide la <strong>velocidad de giro en radianes/segundo ($\omega = 2\pi f$)</strong>. Cada vez que el punto amarillo da una vuelta completa ($2\pi\text{ rad} = 360^\circ$), en la cuerda se dibuja exactamente una onda senoidal completa (un ciclo).
+        </div>
+      </div>
+
+      <!-- Preset selector for Waves -->
+      <div class="preset-chips">
+        <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted); align-self:center; margin-right:4px;">PRESETS:</span>
+        <button class="chip active" onclick="loadWavePreset('custom')">Personalizado</button>
+        <button class="chip" onclick="loadWavePreset('15.12')">Prob 15.12 (Partícula $v_y$ vs Onda $v$)</button>
+        <button class="chip" onclick="loadWavePreset('15.44')">Prob 15.44 (2do Sobretono $n=3$)</button>
+        <button class="chip" onclick="loadWavePreset('15.50')">Prob 15.50 (Onda Viajera $y=A\cos(kx-\omega t)$)</button>
+        <button class="chip" onclick="loadWavePreset('15.41')">Prob 15.41 (Tensión por Masa $T=mg$)</button>
+      </div>
+
+      <div class="sim-grid">
+        <!-- Main Interactive Visualizer Canvas -->
+        <div class="canvas-card">
+          <div class="canvas-header">
+            <div class="canvas-title">
+              <span>🌊</span> Visualizador 2D: Círculo Generador ($\omega$) + Cuerda Transversal
+            </div>
+            <span class="canvas-badge badge-live" id="waveModeBadge">Onda Viajera +x</span>
+          </div>
+
+          <div class="canvas-container" id="waveCanvasContainer">
+            <canvas id="waveCanvas"></canvas>
+            
+            <div class="canvas-overlay-ctrls">
+              <div class="overlay-pill">
+                <span>🔄 <strong>Giro $\omega t$</strong> genera el seno</span>
+                <span>↕️ <strong>Partícula verde:</strong> oscila solo vertical</span>
+              </div>
+              <button class="overlay-btn" id="waveSlowBtn" onclick="toggleSlowMo()" title="Cámara Lenta">
+                🐢 <span id="slowText">Cámara Normal</span>
+              </button>
+              <button class="overlay-btn" id="wavePauseBtn" onclick="toggleWavePause()" title="Pausar/Reanudar">
+                ⏸️ Pausa
+              </button>
+            </div>
+          </div>
+
+          <!-- Real-Time Data Readout Bar -->
+          <div class="data-strip">
+            <div class="data-item" style="border-left-color: var(--accent-purple);">
+              <span class="data-name">Frecuencia Angular ($\omega$)</span>
+              <div class="data-value"><span id="waveOutOmega">12.57</span><span class="data-unit">rad/s</span></div>
+            </div>
+            <div class="data-item" style="border-left-color: var(--accent-emerald);">
+              <span class="data-name">Frecuencia ($f$)</span>
+              <div class="data-value"><span id="waveOutFreq">2.00</span><span class="data-unit">Hz (ciclos/s)</span></div>
+            </div>
+            <div class="data-item" style="border-left-color: var(--accent-amber);">
+              <span class="data-name">Rapidez Onda ($v$)</span>
+              <div class="data-value"><span id="waveOutSpeed">1.60</span><span class="data-unit">m/s</span></div>
+            </div>
+            <div class="data-item" style="border-left-color: var(--accent-cyan);">
+              <span class="data-name">Longitud Onda ($\lambda$)</span>
+              <div class="data-value"><span id="waveOutLambda">0.80</span><span class="data-unit">m</span></div>
+            </div>
+            <div class="data-item" style="border-left-color: var(--accent-rose);">
+              <span class="data-name">Vel. Máx Partícula ($v_{y,\max}$)</span>
+              <div class="data-value"><span id="waveOutVyMax">0.63</span><span class="data-unit">m/s</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Parameter Controller -->
+        <div class="control-panel">
+          <div class="panel-box">
+            <div class="panel-box-title">
+              <span>🎛️ Sliders de Control en Vivo</span>
+              <span style="font-size: 0.75rem; color: var(--accent-cyan);">Mueve y mira el cambio</span>
+            </div>
+
+            <!-- Slider: Frecuencia (f y omega) -->
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">🔄 Frecuencia del Motor ($f$)</span>
+                <span class="control-val-tag" id="valTagFreq">2.00 Hz</span>
+              </div>
+              <input type="range" id="sliderFreq" min="0.5" max="6.0" step="0.1" value="2.0" oninput="onUserChangedFreq()">
+              <div style="font-size:0.75rem; color:var(--accent-purple); margin-top:3px;">
+                $\rightarrow$ Frecuencia angular resultante: <strong id="subTagOmega">$\omega = 12.57\text{ rad/s}$</strong>
+              </div>
+            </div>
+
+            <!-- Slider: Tension / Velocidad de propagacion -->
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">🏹 Tensión de la Cuerda ($T$)</span>
+                <span class="control-val-tag" id="valTagTension">25.6 N</span>
+              </div>
+              <input type="range" id="sliderTension" min="2" max="100" step="1" value="25.6" oninput="onUserChangedTension()">
+              <div style="font-size:0.75rem; color:var(--accent-amber); margin-top:3px;">
+                $\rightarrow$ Rapidez de propagación: <strong id="subTagSpeed">$v = \sqrt{T/\mu} = 1.60\text{ m/s}$</strong>
+              </div>
+            </div>
+
+            <!-- Slider: Amplitud -->
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">📐 Amplitud / Altura ($A$)</span>
+                <span class="control-val-tag" id="valTagAmp">0.05 m</span>
+              </div>
+              <input type="range" id="sliderAmp" min="0.01" max="0.12" step="0.005" value="0.05" oninput="onUserChangedAmp()">
+            </div>
+
+            <!-- Slider: Densidad Lineal -->
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">🧵 Masa por metro de Cuerda ($\mu$)</span>
+                <span class="control-val-tag" id="valTagMu">0.010 kg/m</span>
+              </div>
+              <input type="range" id="sliderMu" min="0.002" max="0.040" step="0.002" value="0.010" oninput="onUserChangedMu()">
+            </div>
+
+            <!-- Switch: Modo Estacionario / Armónicos -->
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-top:1px solid rgba(255,255,255,0.08);">
+              <span style="font-size: 0.85rem; font-weight: 600;">Onda Estacionaria (Extremos Fijos)</span>
+              <label class="switch">
+                <input type="checkbox" id="switchStandingWave" onchange="toggleStandingWave()">
+                <span class="slider-toggle"></span>
+              </label>
+            </div>
+
+            <!-- Armónico Selector (n) -->
+            <div class="control-group" id="harmonicGroup" style="display: none; margin-top: 10px;">
+              <div class="control-header">
+                <span class="control-label">🎸 Número de Armónico ($n$)</span>
+                <span class="control-val-tag" id="valTagHarmonic">n = 3</span>
+              </div>
+              <input type="range" id="sliderHarmonic" min="1" max="8" step="1" value="3" oninput="updateHarmonic()">
+            </div>
+
+            <!-- Live Step-by-Step Math Breakdown -->
+            <div class="formula-breakdown">
+              <div class="formula-step">
+                <span class="formula-desc">1. Frecuencia angular $\omega$</span>
+                <span class="formula-math" id="calcWaveOmega">$\omega = 2\pi f = 12.57\text{ rad/s}$</span>
+              </div>
+              <div class="formula-step">
+                <span class="formula-desc">2. Rapidez de onda $v$</span>
+                <span class="formula-math" id="calcWaveV">$v = \sqrt{T/\mu} = 1.60\text{ m/s}$</span>
+              </div>
+              <div class="formula-step">
+                <span class="formula-desc">3. Longitud de onda $\lambda$</span>
+                <span class="formula-math" id="calcWaveLambda">$\lambda = v / f = 0.80\text{ m}$</span>
+              </div>
+              <div class="formula-step">
+                <span class="formula-desc">4. Número de onda $k$</span>
+                <span class="formula-math" id="calcWaveK">$k = 2\pi/\lambda = 7.85\text{ rad/m}$</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ================================================================= -->
+    <!-- TAB 2: MOVIMIENTO ARMÓNICO SIMPLE (MAS)                           -->
+    <!-- ================================================================= -->
+    <div id="tab-mas" class="sim-tab-content">
+      <div class="preset-chips">
+        <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted); align-self:center; margin-right:4px;">PRESETS M.A.S.:</span>
+        <button class="chip active" onclick="loadMASPreset('custom')">Personalizado</button>
+        <button class="chip" onclick="loadMASPreset('p19')">Pág 19 ($m=0.5\text{kg}$, $k=200\text{N/m}$)</button>
+        <button class="chip" onclick="loadMASPreset('p20')">Pág 20 (Energía $E_k \leftrightarrow E_p$)</button>
+        <button class="chip" onclick="loadMASPreset('p21')">Pág 21 (Péndulo $\omega=\sqrt{g/L}$)</button>
+      </div>
+
+      <div class="sim-grid">
+        <div class="canvas-card">
+          <div class="canvas-header">
+            <div class="canvas-title">
+              <span>⚡</span> Oscilador Masa-Resorte Interactivo
+            </div>
+            <span class="canvas-badge badge-live">MAS Sin Fricción</span>
+          </div>
+
+          <div class="canvas-container" id="masCanvasContainer">
+            <canvas id="masCanvas"></canvas>
+            
+            <div class="canvas-overlay-ctrls">
+              <div class="overlay-pill">
+                <span>🖱️ <strong>Haz clic y arrastra la masa</strong> para soltarla</span>
+              </div>
+              <button class="overlay-btn" id="masResetBtn" onclick="resetMAS()" title="Reiniciar Posición">
+                🔄 Reiniciar
+              </button>
+            </div>
+          </div>
+
+          <div style="padding: 14px 20px; background: rgba(15, 23, 42, 0.95); border-top: 1px solid rgba(255, 255, 255, 0.08);">
+            <div class="energy-bars-container">
+              <div class="energy-bar-row">
+                <span class="energy-bar-label">Cinética ($E_k$):</span>
+                <div class="energy-bar-track"><div class="energy-bar-fill fill-kinetic" id="barEk" style="width: 50%;"></div></div>
+                <span style="font-family: var(--font-mono); font-size: 0.8rem; width: 60px; text-align: right;" id="valEk">0.25 J</span>
+              </div>
+              <div class="energy-bar-row">
+                <span class="energy-bar-label">Elástica ($E_p$):</span>
+                <div class="energy-bar-track"><div class="energy-bar-fill fill-potential" id="barEp" style="width: 50%;"></div></div>
+                <span style="font-family: var(--font-mono); font-size: 0.8rem; width: 60px; text-align: right;" id="valEp">0.25 J</span>
+              </div>
+              <div class="energy-bar-row">
+                <span class="energy-bar-label">Total ($E_{tot}$):</span>
+                <div class="energy-bar-track"><div class="energy-bar-fill fill-total" id="barEtot" style="width: 100%;"></div></div>
+                <span style="font-family: var(--font-mono); font-size: 0.8rem; width: 60px; text-align: right; color: var(--accent-emerald);" id="valEtot">0.50 J</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="data-strip">
+            <div class="data-item" style="border-left-color: var(--accent-cyan);">
+              <span class="data-name">Posición ($x$)</span>
+              <div class="data-value"><span id="masOutX">0.100</span><span class="data-unit">m</span></div>
+            </div>
+            <div class="data-item" style="border-left-color: var(--accent-rose);">
+              <span class="data-name">Velocidad ($v$)</span>
+              <div class="data-value"><span id="masOutV">0.000</span><span class="data-unit">m/s</span></div>
+            </div>
+            <div class="data-item" style="border-left-color: var(--accent-purple);">
+              <span class="data-name">Frecuencia Angular ($\omega$)</span>
+              <div class="data-value"><span id="masOutOmega">20.00</span><span class="data-unit">rad/s</span></div>
+            </div>
+            <div class="data-item" style="border-left-color: var(--accent-amber);">
+              <span class="data-name">Periodo ($T$)</span>
+              <div class="data-value"><span id="masOutPeriod">0.314</span><span class="data-unit">s</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-panel">
+          <div class="panel-box">
+            <div class="panel-box-title">
+              <span>🎛️ Parámetros del Oscilador</span>
+            </div>
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">⚖️ Masa ($m$)</span>
+                <span class="control-val-tag" id="valTagMass">0.50 kg</span>
+              </div>
+              <input type="range" id="sliderMass" min="0.1" max="2.5" step="0.05" value="0.5" oninput="updateMASParams()">
+            </div>
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">🌀 Constante Elástica ($k$)</span>
+                <span class="control-val-tag" id="valTagK">200 N/m</span>
+              </div>
+              <input type="range" id="sliderK" min="20" max="500" step="10" value="200" oninput="updateMASParams()">
+            </div>
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">📏 Amplitud ($A$)</span>
+                <span class="control-val-tag" id="valTagMASAmp">0.10 m</span>
+              </div>
+              <input type="range" id="sliderMASAmp" min="0.02" max="0.20" step="0.01" value="0.10" oninput="updateMASParams()">
+            </div>
+            <div class="formula-breakdown">
+              <div class="formula-step">
+                <span class="formula-desc">Frecuencia angular $\omega$</span>
+                <span class="formula-math" id="calcMASOmega">$\omega = \sqrt{k/m} = 20.00\text{ rad/s}$</span>
+              </div>
+              <div class="formula-step">
+                <span class="formula-desc">Periodo $T$</span>
+                <span class="formula-math" id="calcMAST">$T = 2\pi/\omega = 0.314\text{ s}$</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ================================================================= -->
+    <!-- TAB 3: CIRCUITOS Y MALLAS ELÉCTRICAS                              -->
+    <!-- ================================================================= -->
+    <div id="tab-circuits" class="sim-tab-content">
+      <div class="preset-chips">
+        <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted); align-self:center; margin-right:4px;">PRESETS CIRCUITOS:</span>
+        <button class="chip active" onclick="loadCircuitPreset('ex01')">Circuito 1 (Malla + Divisor)</button>
+        <button class="chip" onclick="loadCircuitPreset('ex02')">Circuito 2 (Malla Doble / Kirchhoff)</button>
+        <button class="chip" onclick="loadCircuitPreset('ex03')">Circuito 3 (Puente Resistivo)</button>
+        <button class="chip" onclick="loadCircuitPreset('ex04')">Circuito 4 (Fuente Nodal)</button>
+      </div>
+
+      <div class="sim-grid">
+        <div class="canvas-card">
+          <div class="canvas-header">
+            <div class="canvas-title">
+              <span>🔋</span> Simulador Esquemático con Flujo de Corriente en Vivo
+            </div>
+            <span class="canvas-badge badge-live">Leyes de Kirchhoff</span>
+          </div>
+
+          <div class="canvas-container" id="circuitCanvasContainer">
+            <canvas id="circuitCanvas"></canvas>
+            
+            <div class="canvas-overlay-ctrls">
+              <div class="overlay-pill">
+                <span>🟡 <strong>Puntos amarillos:</strong> Flujo de carga</span>
+                <span>💡 <strong>Brillo:</strong> Potencia disipada $P=I^2R$</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="data-strip">
+            <div class="data-item" style="border-left-color: var(--accent-amber);">
+              <span class="data-name">Voltaje Fuente ($V_s$)</span>
+              <div class="data-value"><span id="circOutVs">24.0</span><span class="data-unit">V</span></div>
+            </div>
+            <div class="data-item" style="border-left-color: var(--accent-cyan);">
+              <span class="data-name">Corriente Total ($I_t$)</span>
+              <div class="data-value"><span id="circOutIt">2.00</span><span class="data-unit">A</span></div>
+            </div>
+            <div class="data-item" style="border-left-color: var(--accent-emerald);">
+              <span class="data-name">Resistencia Equivalente ($R_{eq}$)</span>
+              <div class="data-value"><span id="circOutReq">12.0</span><span class="data-unit">$\Omega$</span></div>
+            </div>
+            <div class="data-item" style="border-left-color: var(--accent-rose);">
+              <span class="data-name">Potencia Suministrada</span>
+              <div class="data-value"><span id="circOutPtot">48.0</span><span class="data-unit">W</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-panel">
+          <div class="panel-box">
+            <div class="panel-box-title">
+              <span>🎛️ Componentes del Circuito</span>
+            </div>
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">⚡ Fuente de Voltaje ($V_s$)</span>
+                <span class="control-val-tag" id="valTagVs">24 V</span>
+              </div>
+              <input type="range" id="sliderVs" min="2" max="100" step="1" value="24" oninput="updateCircuitParams()">
+            </div>
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">🔲 Resistor $R_1$</span>
+                <span class="control-val-tag" id="valTagR1">6 $\Omega$</span>
+              </div>
+              <input type="range" id="sliderR1" min="1" max="50" step="1" value="6" oninput="updateCircuitParams()">
+            </div>
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">🔲 Resistor $R_2$</span>
+                <span class="control-val-tag" id="valTagR2">12 $\Omega$</span>
+              </div>
+              <input type="range" id="sliderR2" min="1" max="50" step="1" value="12" oninput="updateCircuitParams()">
+            </div>
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">🔲 Resistor $R_3$</span>
+                <span class="control-val-tag" id="valTagR3">8 $\Omega$</span>
+              </div>
+              <input type="range" id="sliderR3" min="1" max="50" step="1" value="8" oninput="updateCircuitParams()">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JavaScript Simulator Engine -->
+  <script>
+    /* ========================================================================= */
+    /* 1. AUDIO SYNTHESIZER                                                      */
+    /* ========================================================================= */
+    let audioCtx = null;
+    let oscNode = null;
+    let gainNode = null;
+    let isAudioEnabled = false;
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+        gainNode = audioCtx.createGain();
+        gainNode.gain.value = 0.04;
+        gainNode.connect(audioCtx.destination);
+      }
+    }
+
+    function toggleAudio() {
+      initAudio();
+      isAudioEnabled = !isAudioEnabled;
+      const soundIcon = document.getElementById('soundIcon');
+      const soundText = document.getElementById('soundText');
+      const soundBtn = document.getElementById('soundToggleBtn');
+
+      if (isAudioEnabled) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        soundIcon.textContent = '🔊';
+        soundText.textContent = 'Audio Activo';
+        soundBtn.classList.add('sound-active');
+        playWaveTone(waveState.freq * 100);
+      } else {
+        soundIcon.textContent = '🔇';
+        soundText.textContent = 'Audio Desactivado';
+        soundBtn.classList.remove('sound-active');
+        stopAudioTone();
+      }
+    }
+
+    function playWaveTone(freq) {
+      if (!isAudioEnabled || !audioCtx) return;
+      if (!oscNode) {
+        oscNode = audioCtx.createOscillator();
+        oscNode.type = 'sine';
+        oscNode.connect(gainNode);
+        oscNode.start();
+      }
+      const clamped = Math.max(80, Math.min(1200, freq));
+      oscNode.frequency.setTargetAtTime(clamped, audioCtx.currentTime, 0.05);
+    }
+
+    function stopAudioTone() {
+      if (oscNode) {
+        try { oscNode.stop(); oscNode.disconnect(); } catch(e) {}
+        oscNode = null;
+      }
+    }
+
+    /* ========================================================================= */
+    /* 2. TAB SWITCHING LOGIC                                                    */
+    /* ========================================================================= */
+    let currentMainTab = 'waves';
+
+    function switchMainTab(tabId) {
+      currentMainTab = tabId;
+      document.querySelectorAll('.tab-btn').forEach((btn) => btn.classList.remove('active'));
+      document.querySelectorAll('.sim-tab-content').forEach(content => content.classList.remove('active'));
+
+      if (tabId === 'waves') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('tab-waves').classList.add('active');
+      } else if (tabId === 'mas') {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('tab-mas').classList.add('active');
+      } else if (tabId === 'circuits') {
+        document.querySelectorAll('.tab-btn')[2].classList.add('active');
+        document.getElementById('tab-circuits').classList.add('active');
+      }
+      handleResize();
+    }
+
+
+    /* ========================================================================= */
+    /* 3. DYNAMIC SYSTEM EXPLAINER (RESPUESTAS CONCEPTUALES EN VIVO)             */
+    /* ========================================================================= */
+    function explainConcept(topic) {
+      document.querySelectorAll('.cq-btn').forEach(b => b.classList.remove('active'));
+      if (event && event.target) {
+        const btn = event.target.closest('.cq-btn');
+        if (btn) btn.classList.add('active');
+      }
+
+      const boxTitle = document.getElementById('lecTitle');
+      const boxText = document.getElementById('lecText');
+
+      if (topic === 'omega') {
+        boxTitle.innerHTML = '🔄 ¿QUÉ ES $\\omega$ (FRECUENCIA ANGULAR)?';
+        boxText.innerHTML = `Mira el <strong>círculo generador a la izquierda del canvas</strong>: $\\omega$ mide la <strong>velocidad con la que gira el ángulo</strong> en radianes por segundo ($\\omega = 2\\pi f$). Como 1 vuelta completa tiene $2\\pi\\text{ radianes} = 360^\\circ$, si tu frecuencia es $f = ${waveState.freq.toFixed(1)}\\text{ Hz}$, el círculo gira a $\\omega = 2\\pi(${waveState.freq.toFixed(1)}) = \\mathbf{${(2*Math.PI*waveState.freq).toFixed(2)}\\text{ rad/s}}$. La altura de ese punto giratorio proyecta directamente la onda senoidal.`;
+      } else if (topic === 'transversal') {
+        boxTitle.innerHTML = '↕️ ¿POR QUÉ ES UNA ONDA "TRANSVERSAL"?';
+        boxText.innerHTML = `<strong>Transversal significa perpendicular ($90^\\circ$)</strong>. Observa el <strong>punto verde</strong> en la cuerda: <strong>solo sube y baja verticalmente</strong> (eje $Y$). ¡Ningún pedazo de cuerda se mueve hacia adelante! Lo que viaja hacia la derecha (eje $X$) a rapidez $v$ es la <strong>forma/energía</strong> de la onda. Es exactamente como la "ola" en un estadio de fútbol: tú solo te paras y te sientas en tu silla, pero la ola recorre todo el estadio.`;
+      } else if (topic === 'freq_vs_speed') {
+        boxTitle.innerHTML = '⚡ FRECUENCIA ($f$) vs VELOCIDAD DE ONDA ($v$): ¿CUÁL ES LA DIFERENCIA?';
+        boxText.innerHTML = `¡No son lo mismo! <strong>Frecuencia ($f$)</strong> es el ritmo de tu mano agitando la cuerda (tiempo: cuántos ciclos por segundo). <strong>Velocidad ($v$)</strong> es qué tan rápido corre la onda hacia la pared (espacio: metros por segundo), y <strong>solo depende de qué tan tensa esté la cuerda ($v = \\sqrt{T/\\mu}$)</strong>. Si agitas tu mano más rápido pero no cambias la tensión, la onda viaja a la misma velocidad hacia adelante, obligando a las crestas a quedar más juntas (menor $\\lambda$).`;
+      } else if (topic === 'why_more_waves') {
+        boxTitle.innerHTML = '🌊 ¿POR QUÉ AL SUBIR LA FRECUENCIA SE VEN MÁS ONDAS?';
+        boxText.innerHTML = `Porque la velocidad de propagación $v = \\sqrt{T/\\mu} = ${waveState.v.toFixed(2)}\\text{ m/s}$ es <strong>fija</strong> mientras no toques la tensión. Si emites $2$ ondas por segundo ($f=2$), cada onda tiene $0.5\\text{ s}$ para avanzar antes de la siguiente. Si subes a $f=5\\text{ Hz}$, emites una onda cada $0.2\\text{ s}$, así que tienen menos espacio para expandirse y se <strong>aprietan</strong> (su longitud $\\lambda = v/f$ se reduce de ${(waveState.v/2).toFixed(2)}\\text{ m}$ a ${(waveState.v/5).toFixed(2)}\\text{ m}$). ¡Por eso ves muchas más crestas en la misma pantalla!`;
+      }
+
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise(['#lecTitle', '#lecText']);
+      }
+    }
+
+    // Dynamic slider callouts
+    function onUserChangedFreq() {
+      waveState.freq = parseFloat(document.getElementById('sliderFreq').value);
+      updateWaveCalculations();
+      
+      const boxTitle = document.getElementById('lecTitle');
+      const boxText = document.getElementById('lecText');
+      boxTitle.innerHTML = `🔄 RITMO MODIFICADO: Frecuencia $f = ${waveState.freq.toFixed(1)}\\text{ Hz}$ ($\\omega = ${(2*Math.PI*waveState.freq).toFixed(2)}\\text{ rad/s}$)`;
+      boxText.innerHTML = `Estás haciendo que tu mano (y el círculo generador) gire más rápido. Como la cuerda tiene la misma tensión, la rapidez de avance $v$ sigue en $${waveState.v.toFixed(2)}\\text{ m/s}$, por lo que la distancia física entre crestas se reduce a $\\mathbf{\\lambda = v/f = ${waveState.lambda.toFixed(2)}\\text{ m}}$.`;
+      
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise(['#lecTitle', '#lecText']);
+      }
+    }
+
+    function onUserChangedTension() {
+      waveState.tension = parseFloat(document.getElementById('sliderTension').value);
+      updateWaveCalculations();
+
+      const boxTitle = document.getElementById('lecTitle');
+      const boxText = document.getElementById('lecText');
+      boxTitle.innerHTML = `🏹 TENSIÓN MODIFICADA: $T = ${waveState.tension.toFixed(1)}\\text{ N}$ $\\rightarrow$ Rapidez $v = ${waveState.v.toFixed(2)}\\text{ m/s}$`;
+      boxText.innerHTML = `Al apretar más la cuerda, la onda viaja más rápido hacia adelante ($v = \\sqrt{T/\\mu}$). Como tu mano sigue al mismo ritmo de $f = ${waveState.freq.toFixed(1)}\\text{ Hz}$, las crestas viajan más distancia antes de que termine el ciclo, estirando la longitud de onda a $\\mathbf{\\lambda = ${waveState.lambda.toFixed(2)}\\text{ m}}$.`;
+
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise(['#lecTitle', '#lecText']);
+      }
+    }
+
+    function onUserChangedAmp() {
+      waveState.amp = parseFloat(document.getElementById('sliderAmp').value);
+      updateWaveCalculations();
+      const boxTitle = document.getElementById('lecTitle');
+      const boxText = document.getElementById('lecText');
+      boxTitle.innerHTML = `📐 AMPLITUD MODIFICADA: $A = ${waveState.amp.toFixed(3)}\\text{ m}$`;
+      boxText.innerHTML = `Aumentaste la altura del pico. Fíjate que la onda <strong>no viaja más rápido hacia adelante</strong> ($v$ no cambia), pero la partícula verde tiene que recorrer más distancia vertical en el mismo tiempo, por lo que su velocidad transversal máxima sube a $\\mathbf{v_{y,\\max} = \\omega A = ${(2*Math.PI*waveState.freq*waveState.amp).toFixed(2)}\\text{ m/s}}$.`;
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise(['#lecTitle', '#lecText']);
+      }
+    }
+
+    function onUserChangedMu() {
+      waveState.mu = parseFloat(document.getElementById('sliderMu').value);
+      updateWaveCalculations();
+      const boxTitle = document.getElementById('lecTitle');
+      const boxText = document.getElementById('lecText');
+      boxTitle.innerHTML = `🧵 DENSIDAD MODIFICADA: $\\mu = ${waveState.mu.toFixed(3)}\\text{ kg/m}$`;
+      boxText.innerHTML = `Una cuerda más gruesa y pesada tiene más inercia, lo que frena la velocidad de la onda a $v = \\sqrt{T/\\mu} = ${waveState.v.toFixed(2)}\\text{ m/s}$.`;
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise(['#lecTitle', '#lecText']);
+      }
+    }
+
+
+    /* ========================================================================= */
+    /* 4. WAVES SIMULATION ENGINE                                                */
+    /* ========================================================================= */
+    const waveState = {
+      amp: 0.05,        // Amplitude in meters
+      freq: 2.0,        // Frequency in Hz
+      tension: 25.6,    // Tension in N
+      mu: 0.010,        // Linear mass density in kg/m
+      v: 1.60,          // Calculated speed v = sqrt(T/mu)
+      lambda: 0.80,     // Calculated lambda = v / f
+      omega: 12.57,     // 2 * pi * f
+      k: 7.85,          // 2 * pi / lambda
+      isStanding: false,
+      harmonic: 3,
+      length: 2.4,      // Visual string length in meters
+      time: 0,
+      isPaused: false,
+      speedMultiplier: 1.0
+    };
+
+    const waveCanvas = document.getElementById('waveCanvas');
+    const waveCtx = waveCanvas.getContext('2d');
+
+    function updateWaveCalculations() {
+      waveState.v = Math.sqrt(waveState.tension / waveState.mu);
+      waveState.lambda = waveState.v / waveState.freq;
+      waveState.omega = 2 * Math.PI * waveState.freq;
+      waveState.k = (2 * Math.PI) / waveState.lambda;
+      const vyMax = waveState.omega * waveState.amp;
+
+      // Update slider tags
+      document.getElementById('valTagFreq').textContent = waveState.freq.toFixed(2) + ' Hz';
+      document.getElementById('subTagOmega').innerHTML = `$\\omega = ${waveState.omega.toFixed(2)}\\text{ rad/s}$`;
+      document.getElementById('valTagTension').textContent = waveState.tension.toFixed(1) + ' N';
+      document.getElementById('subTagSpeed').innerHTML = `$v = \\sqrt{T/\\mu} = ${waveState.v.toFixed(2)}\\text{ m/s}$`;
+      document.getElementById('valTagAmp').textContent = waveState.amp.toFixed(3) + ' m';
+      document.getElementById('valTagMu').textContent = waveState.mu.toFixed(3) + ' kg/m';
+
+      // Update data strip
+      document.getElementById('waveOutOmega').textContent = waveState.omega.toFixed(2);
+      document.getElementById('waveOutFreq').textContent = waveState.freq.toFixed(2);
+      document.getElementById('waveOutSpeed').textContent = waveState.v.toFixed(2);
+      document.getElementById('waveOutLambda').textContent = waveState.lambda.toFixed(2);
+      document.getElementById('waveOutVyMax').textContent = vyMax.toFixed(2);
+
+      // Formulas update
+      document.getElementById('calcWaveOmega').innerHTML = `$\\omega = 2\\pi f = 2\\pi(${waveState.freq.toFixed(2)}) = ${waveState.omega.toFixed(2)}\\text{ rad/s}$`;
+      document.getElementById('calcWaveV').innerHTML = `$v = \\sqrt{T/\\mu} = \\sqrt{${waveState.tension.toFixed(1)}/${waveState.mu.toFixed(3)}} = ${waveState.v.toFixed(2)}\\text{ m/s}$`;
+      document.getElementById('calcWaveLambda').innerHTML = `$\\lambda = v/f = ${waveState.v.toFixed(2)}/${waveState.freq.toFixed(2)} = ${waveState.lambda.toFixed(2)}\\text{ m}$`;
+      document.getElementById('calcWaveK').innerHTML = `$k = 2\\pi/\\lambda = ${waveState.k.toFixed(2)}\\text{ rad/m}$`;
+
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise(['#calcWaveOmega', '#calcWaveV', '#calcWaveLambda', '#calcWaveK', '#subTagOmega', '#subTagSpeed']);
+      }
+
+      if (isAudioEnabled) playWaveTone(waveState.freq * 120);
+    }
+
+    function toggleWavePause() {
+      waveState.isPaused = !waveState.isPaused;
+      document.getElementById('wavePauseBtn').innerHTML = waveState.isPaused ? '▶️ Reanudar' : '⏸️ Pausa';
+    }
+
+    function toggleSlowMo() {
+      if (waveState.speedMultiplier === 1.0) {
+        waveState.speedMultiplier = 0.25;
+        document.getElementById('slowText').textContent = 'Cámara Lenta (0.25x)';
+        document.getElementById('waveSlowBtn').style.background = 'var(--accent-amber)';
+        document.getElementById('waveSlowBtn').style.color = '#000';
+      } else {
+        waveState.speedMultiplier = 1.0;
+        document.getElementById('slowText').textContent = 'Cámara Normal';
+        document.getElementById('waveSlowBtn').style.background = 'rgba(255,255,255,0.08)';
+        document.getElementById('waveSlowBtn').style.color = '#fff';
+      }
+    }
+
+    function toggleStandingWave() {
+      waveState.isStanding = document.getElementById('switchStandingWave').checked;
+      const hGroup = document.getElementById('harmonicGroup');
+      const badge = document.getElementById('waveModeBadge');
+
+      if (waveState.isStanding) {
+        hGroup.style.display = 'block';
+        badge.textContent = `Onda Estacionaria (n=${waveState.harmonic})`;
+        badge.style.color = 'var(--accent-purple)';
+        updateHarmonic();
+      } else {
+        hGroup.style.display = 'none';
+        badge.textContent = 'Onda Viajera +x';
+        badge.style.color = 'var(--accent-emerald)';
+        updateWaveCalculations();
+      }
+    }
+
+    function updateHarmonic() {
+      waveState.harmonic = parseInt(document.getElementById('sliderHarmonic').value);
+      document.getElementById('valTagHarmonic').textContent = `n = ${waveState.harmonic}`;
+      document.getElementById('waveModeBadge').textContent = `Onda Estacionaria (n=${waveState.harmonic})`;
+      // In a fixed string of length L, lambda_n = 2L/n
+      waveState.lambda = (2 * waveState.length) / waveState.harmonic;
+      waveState.v = waveState.lambda * waveState.freq;
+      waveState.tension = waveState.mu * (waveState.v * waveState.v);
+      document.getElementById('sliderTension').value = Math.min(100, waveState.tension);
+      updateWaveCalculations();
+    }
+
+    function loadWavePreset(type) {
+      document.querySelectorAll('#tab-waves .chip').forEach(c => c.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const standingSwitch = document.getElementById('switchStandingWave');
+
+      if (type === '15.12') {
+        standingSwitch.checked = false;
+        toggleStandingWave();
+        document.getElementById('sliderFreq').value = 2.0;
+        document.getElementById('sliderTension').value = 25.6;
+        document.getElementById('sliderMu').value = 0.010;
+        // A = lambda / (2*pi)
+        waveState.tension = 25.6; waveState.mu = 0.010; waveState.freq = 2.0;
+        const v = Math.sqrt(25.6 / 0.010);
+        const l = v / 2.0;
+        const a = l / (2 * Math.PI);
+        document.getElementById('sliderAmp').value = a.toFixed(3);
+        waveState.amp = a;
+        explainConcept('transversal');
+      } else if (type === '15.44') {
+        standingSwitch.checked = true;
+        toggleStandingWave();
+        document.getElementById('sliderHarmonic').value = 3;
+        document.getElementById('sliderMu').value = 0.012;
+        updateHarmonic();
+      } else if (type === '15.50') {
+        standingSwitch.checked = false;
+        toggleStandingWave();
+        document.getElementById('sliderAmp').value = 0.075;
+        document.getElementById('sliderFreq').value = 1.91; // 12.0 / 2pi
+        document.getElementById('sliderTension').value = 36.0;
+        explainConcept('omega');
+      } else if (type === '15.41') {
+        standingSwitch.checked = false;
+        toggleStandingWave();
+        document.getElementById('sliderTension').value = 49.0; // T = 5kg * 9.8
+        document.getElementById('sliderMu').value = 0.025;
+        document.getElementById('sliderFreq').value = 3.0;
+        explainConcept('freq_vs_speed');
+      }
+      onUserChangedFreq();
+    }
+
+    function drawWaveSim() {
+      const w = waveCanvas.width;
+      const h = waveCanvas.height;
+      const centerY = h / 2;
+
+      waveCtx.clearRect(0, 0, w, h);
+
+      // Background grid
+      waveCtx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+      waveCtx.lineWidth = 1;
+      for (let x = 0; x < w; x += 35) {
+        waveCtx.beginPath(); waveCtx.moveTo(x, 0); waveCtx.lineTo(x, h); waveCtx.stroke();
+      }
+      for (let y = 0; y < h; y += 35) {
+        waveCtx.beginPath(); waveCtx.moveTo(0, y); waveCtx.lineTo(w, y); waveCtx.stroke();
+      }
+
+      // Left Section: PHASOR ROTATING CIRCLE (GENERADOR DE OMEGA w)
+      const phasorCenterX = 85;
+      const phasorCenterY = centerY;
+      const phasorRadius = 45; // pixel amplitude for circle
+
+      // Phasor circle outline
+      waveCtx.strokeStyle = 'rgba(192, 132, 252, 0.35)';
+      waveCtx.lineWidth = 1.5;
+      waveCtx.beginPath();
+      waveCtx.arc(phasorCenterX, phasorCenterY, phasorRadius, 0, Math.PI * 2);
+      waveCtx.stroke();
+
+      // Phasor cross axes
+      waveCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      waveCtx.beginPath();
+      waveCtx.moveTo(phasorCenterX - phasorRadius - 10, phasorCenterY);
+      waveCtx.lineTo(phasorCenterX + phasorRadius + 10, phasorCenterY);
+      waveCtx.moveTo(phasorCenterX, phasorCenterY - phasorRadius - 10);
+      waveCtx.lineTo(phasorCenterX, phasorCenterY + phasorRadius + 10);
+      waveCtx.stroke();
+
+      // Current angle theta = omega * t
+      const theta = (waveState.omega * waveState.time) % (2 * Math.PI);
+      const phasorDotX = phasorCenterX + phasorRadius * Math.cos(theta);
+      const phasorDotY = phasorCenterY - phasorRadius * Math.sin(theta);
+
+      // Rotating vector arrow (Phasor)
+      waveCtx.strokeStyle = '#c084fc';
+      waveCtx.fillStyle = '#c084fc';
+      waveCtx.lineWidth = 2.5;
+      waveCtx.beginPath();
+      waveCtx.moveTo(phasorCenterX, phasorCenterY);
+      waveCtx.lineTo(phasorDotX, phasorDotY);
+      waveCtx.stroke();
+
+      // Phasor glowing dot
+      waveCtx.shadowColor = '#c084fc';
+      waveCtx.shadowBlur = 10;
+      waveCtx.beginPath();
+      waveCtx.arc(phasorDotX, phasorDotY, 6, 0, Math.PI * 2);
+      waveCtx.fill();
+      waveCtx.shadowBlur = 0;
+
+      // Label under phasor
+      waveCtx.fillStyle = '#c084fc';
+      waveCtx.font = '700 11px sans-serif';
+      waveCtx.fillText(`Giro: ω = ${waveState.omega.toFixed(1)} rad/s`, phasorCenterX - 55, phasorCenterY + phasorRadius + 24);
+
+      // String origin line (x = 0 starts at stringStartX)
+      const stringStartX = 180;
+      const stringEndX = w - 40;
+      const stringPixelLength = stringEndX - stringStartX;
+
+      // Horizontal dashed projection line connecting circle to string
+      waveCtx.strokeStyle = 'rgba(192, 132, 252, 0.4)';
+      waveCtx.setLineDash([4, 4]);
+      waveCtx.beginPath();
+      waveCtx.moveTo(phasorDotX, phasorDotY);
+      waveCtx.lineTo(stringStartX, phasorDotY);
+      waveCtx.stroke();
+      waveCtx.setLineDash([]);
+
+      // Center string axis line
+      waveCtx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
+      waveCtx.setLineDash([6, 6]);
+      waveCtx.beginPath();
+      waveCtx.moveTo(stringStartX, centerY);
+      waveCtx.lineTo(stringEndX, centerY);
+      waveCtx.stroke();
+      waveCtx.setLineDash([]);
+
+      const scaleX = stringPixelLength / waveState.length; // pixels per meter
+      const scaleY = phasorRadius / waveState.amp;         // match circle scale
+      const k = waveState.k;
+      const omega = waveState.omega;
+      const t = waveState.time;
+
+      // Draw Wave Curve on the string
+      waveCtx.beginPath();
+      waveCtx.lineWidth = 3.5;
+      waveCtx.strokeStyle = '#38bdf8';
+      waveCtx.shadowColor = 'rgba(56, 189, 248, 0.5)';
+      waveCtx.shadowBlur = 10;
+
+      const numPoints = 220;
+      let testPartX = 0.45 * waveState.length;
+      let testPartY = 0;
+      let testPartVy = 0;
+
+      for (let i = 0; i <= numPoints; i++) {
+        const xMeters = (i / numPoints) * waveState.length;
+        let yMeters = 0;
+
+        if (waveState.isStanding) {
+          yMeters = 2 * waveState.amp * Math.sin(k * xMeters) * Math.cos(omega * t);
+        } else {
+          yMeters = waveState.amp * Math.sin(k * xMeters - omega * t);
+        }
+
+        const px = stringStartX + (xMeters * scaleX);
+        const py = centerY - (yMeters * scaleY);
+
+        if (i === 0) waveCtx.moveTo(px, py);
+        else waveCtx.lineTo(px, py);
+
+        if (Math.abs(xMeters - testPartX) < (waveState.length / numPoints)) {
+          testPartY = yMeters;
+          if (waveState.isStanding) {
+            testPartVy = -2 * waveState.amp * omega * Math.sin(k * xMeters) * Math.sin(omega * t);
+          } else {
+            testPartVy = -waveState.amp * omega * Math.cos(k * xMeters - omega * t);
+          }
+        }
+      }
+      waveCtx.stroke();
+      waveCtx.shadowBlur = 0;
+
+      // Wavelength Dimension Indicator (Regla de Lambda)
+      const lambdaPx = waveState.lambda * scaleX;
+      if (lambdaPx < stringPixelLength) {
+        const dimY = 40;
+        const dimStartX = stringStartX + 20;
+        waveCtx.strokeStyle = '#fbbf24';
+        waveCtx.fillStyle = '#fbbf24';
+        waveCtx.lineWidth = 2;
+
+        waveCtx.beginPath();
+        waveCtx.moveTo(dimStartX, dimY);
+        waveCtx.lineTo(dimStartX + lambdaPx, dimY);
+        waveCtx.stroke();
+
+        // Arrow tick markers
+        waveCtx.beginPath();
+        waveCtx.moveTo(dimStartX, dimY - 6); waveCtx.lineTo(dimStartX, dimY + 6);
+        waveCtx.moveTo(dimStartX + lambdaPx, dimY - 6); waveCtx.lineTo(dimStartX + lambdaPx, dimY + 6);
+        waveCtx.stroke();
+
+        waveCtx.font = '700 12px monospace';
+        waveCtx.fillText(`Longitud de onda λ = ${waveState.lambda.toFixed(2)} m`, dimStartX + 10, dimY - 8);
+      }
+
+      // Standing wave nodes
+      if (waveState.isStanding) {
+        for (let n = 0; n <= waveState.harmonic; n++) {
+          const nodeX = stringStartX + (n * (waveState.length / waveState.harmonic)) * scaleX;
+          waveCtx.fillStyle = '#f43f5e';
+          waveCtx.beginPath();
+          waveCtx.arc(nodeX, centerY, 5, 0, Math.PI * 2);
+          waveCtx.fill();
+          waveCtx.font = '11px sans-serif';
+          waveCtx.fillText(n === 0 || n === waveState.harmonic ? 'Fijo' : 'Nodo', nodeX - 12, centerY + 22);
+        }
+      }
+
+      // Test Particle (Green Dot)
+      const partPx = stringStartX + (testPartX * scaleX);
+      const partPy = centerY - (testPartY * scaleY);
+
+      // Particle vertical oscillation trajectory rail
+      waveCtx.strokeStyle = 'rgba(52, 211, 153, 0.25)';
+      waveCtx.setLineDash([3, 3]);
+      waveCtx.beginPath();
+      waveCtx.moveTo(partPx, centerY - (waveState.amp * scaleY * (waveState.isStanding ? 2 : 1)));
+      waveCtx.lineTo(partPx, centerY + (waveState.amp * scaleY * (waveState.isStanding ? 2 : 1)));
+      waveCtx.stroke();
+      waveCtx.setLineDash([]);
+
+      // Particle body
+      waveCtx.shadowColor = '#34d399';
+      waveCtx.shadowBlur = 14;
+      waveCtx.fillStyle = '#34d399';
+      waveCtx.beginPath();
+      waveCtx.arc(partPx, partPy, 8, 0, Math.PI * 2);
+      waveCtx.fill();
+      waveCtx.shadowBlur = 0;
+
+      // Particle Velocity Vector Arrow vy (Transversal)
+      const arrowLen = -testPartVy * 25;
+      if (Math.abs(arrowLen) > 2) {
+        waveCtx.strokeStyle = '#f43f5e';
+        waveCtx.fillStyle = '#f43f5e';
+        waveCtx.lineWidth = 3;
+        waveCtx.beginPath();
+        waveCtx.moveTo(partPx, partPy);
+        waveCtx.lineTo(partPx, partPy + arrowLen);
+        waveCtx.stroke();
+        
+        const headDir = arrowLen > 0 ? 1 : -1;
+        waveCtx.beginPath();
+        waveCtx.moveTo(partPx - 4, partPy + arrowLen - (headDir * 6));
+        waveCtx.lineTo(partPx, partPy + arrowLen);
+        waveCtx.lineTo(partPx + 4, partPy + arrowLen - (headDir * 6));
+        waveCtx.fill();
+      }
+
+      // Wave Propagation Speed Vector Arrow v (Longitudinal / Horizontal)
+      if (!waveState.isStanding) {
+        const arrowX = w - 180;
+        const arrowY = 40;
+        waveCtx.strokeStyle = '#38bdf8';
+        waveCtx.fillStyle = '#38bdf8';
+        waveCtx.lineWidth = 2.5;
+        waveCtx.beginPath();
+        waveCtx.moveTo(arrowX, arrowY);
+        waveCtx.lineTo(arrowX + 80, arrowY);
+        waveCtx.stroke();
+        
+        waveCtx.beginPath();
+        waveCtx.moveTo(arrowX + 70, arrowY - 5);
+        waveCtx.lineTo(arrowX + 80, arrowY);
+        waveCtx.lineTo(arrowX + 70, arrowY + 5);
+        waveCtx.fill();
+        waveCtx.font = '700 12px sans-serif';
+        waveCtx.fillText(`Rapidez v = ${waveState.v.toFixed(2)} m/s →`, arrowX - 10, arrowY - 10);
+      }
+
+      if (!waveState.isPaused) {
+        waveState.time += 0.016 * waveState.speedMultiplier;
+      }
+    }
+
+
+    /* ========================================================================= */
+    /* 5. MAS (SIMPLE HARMONIC MOTION) SIMULATION ENGINE                         */
+    /* ========================================================================= */
+    const masState = {
+      mass: 0.50, k: 200, amp: 0.10, x: 0.10, v: 0.0, isDragging: false, time: 0
+    };
+    const masCanvas = document.getElementById('masCanvas');
+    const masCtx = masCanvas.getContext('2d');
+
+    function updateMASParams() {
+      masState.mass = parseFloat(document.getElementById('sliderMass').value);
+      masState.k = parseFloat(document.getElementById('sliderK').value);
+      masState.amp = parseFloat(document.getElementById('sliderMASAmp').value);
+
+      document.getElementById('valTagMass').textContent = masState.mass.toFixed(2) + ' kg';
+      document.getElementById('valTagK').textContent = masState.k.toFixed(0) + ' N/m';
+      document.getElementById('valTagMASAmp').textContent = masState.amp.toFixed(2) + ' m';
+
+      if (!masState.isDragging) {
+        masState.x = masState.amp;
+        masState.v = 0;
+      }
+      calculateMASOutputs();
+    }
+
+    function resetMAS() {
+      masState.x = masState.amp;
+      masState.v = 0;
+      masState.time = 0;
+      calculateMASOutputs();
+    }
+
+    function calculateMASOutputs() {
+      const omega = Math.sqrt(masState.k / masState.mass);
+      const T = (2 * Math.PI) / omega;
+      document.getElementById('masOutOmega').textContent = omega.toFixed(2);
+      document.getElementById('masOutPeriod').textContent = T.toFixed(3);
+      document.getElementById('calcMASOmega').innerHTML = `$\\omega = \\sqrt{k/m} = \\sqrt{${masState.k}/${masState.mass}} = ${omega.toFixed(2)}\\text{ rad/s}$`;
+      document.getElementById('calcMAST').innerHTML = `$T = 2\\pi/\\omega = ${T.toFixed(3)}\\text{ s}$`;
+
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise(['#calcMASOmega', '#calcMAST']);
+      }
+    }
+
+    function loadMASPreset(preset) {
+      document.querySelectorAll('#tab-mas .chip').forEach(c => c.classList.remove('active'));
+      event.target.classList.add('active');
+      if (preset === 'p19') {
+        document.getElementById('sliderMass').value = 0.50;
+        document.getElementById('sliderK').value = 200;
+        document.getElementById('sliderMASAmp').value = 0.12;
+      } else if (preset === 'p20') {
+        document.getElementById('sliderMass').value = 1.20;
+        document.getElementById('sliderK').value = 350;
+        document.getElementById('sliderMASAmp').value = 0.15;
+      } else if (preset === 'p21') {
+        document.getElementById('sliderMass').value = 0.25;
+        document.getElementById('sliderK').value = 80;
+        document.getElementById('sliderMASAmp').value = 0.08;
+      }
+      updateMASParams();
+    }
+
+    masCanvas.addEventListener('mousedown', (e) => {
+      const rect = masCanvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const w = masCanvas.width;
+      const centerX = w / 2;
+      const scaleX = (w * 0.35) / 0.20;
+      const blockPx = centerX + (masState.x * scaleX);
+      if (Math.abs(clickX - blockPx) < 50) masState.isDragging = true;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!masState.isDragging) return;
+      const rect = masCanvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const w = masCanvas.width;
+      const centerX = w / 2;
+      const scaleX = (w * 0.35) / 0.20;
+      let newX = (mouseX - centerX) / scaleX;
+      newX = Math.max(-0.20, Math.min(0.20, newX));
+      masState.x = newX;
+      masState.amp = Math.abs(newX);
+      masState.v = 0;
+      document.getElementById('sliderMASAmp').value = masState.amp;
+      document.getElementById('valTagMASAmp').textContent = masState.amp.toFixed(2) + ' m';
+    });
+
+    window.addEventListener('mouseup', () => { masState.isDragging = false; });
+
+    function drawMASSim() {
+      const w = masCanvas.width;
+      const h = masCanvas.height;
+      const centerY = h / 2;
+      const centerX = w / 2;
+      const scaleX = (w * 0.35) / 0.20;
+
+      masCtx.clearRect(0, 0, w, h);
+
+      if (!masState.isDragging) {
+        const dt = 0.016;
+        const omegaSq = masState.k / masState.mass;
+        const accel = -omegaSq * masState.x;
+        masState.v += accel * dt;
+        masState.x += masState.v * dt;
+      }
+
+      const Ek = 0.5 * masState.mass * (masState.v * masState.v);
+      const Ep = 0.5 * masState.k * (masState.x * masState.x);
+      const Etot = Ek + Ep;
+
+      document.getElementById('masOutX').textContent = masState.x.toFixed(3);
+      document.getElementById('masOutV').textContent = masState.v.toFixed(3);
+
+      const maxE = Math.max(0.01, 0.5 * masState.k * (masState.amp * masState.amp));
+      document.getElementById('barEk').style.width = Math.min(100, (Ek / maxE) * 100) + '%';
+      document.getElementById('barEp').style.width = Math.min(100, (Ep / maxE) * 100) + '%';
+      document.getElementById('valEk').textContent = Ek.toFixed(2) + ' J';
+      document.getElementById('valEp').textContent = Ep.toFixed(2) + ' J';
+      document.getElementById('valEtot').textContent = Etot.toFixed(2) + ' J';
+
+      const wallX = 60;
+      masCtx.fillStyle = '#1e293b';
+      masCtx.fillRect(wallX - 15, centerY - 90, 15, 180);
+      masCtx.strokeStyle = '#475569';
+      masCtx.lineWidth = 2;
+      masCtx.strokeRect(wallX - 15, centerY - 90, 15, 180);
+
+      masCtx.strokeStyle = '#334155';
+      masCtx.lineWidth = 3;
+      masCtx.beginPath();
+      masCtx.moveTo(wallX - 20, centerY + 50);
+      masCtx.lineTo(w - 40, centerY + 50);
+      masCtx.stroke();
+
+      masCtx.strokeStyle = 'rgba(52, 211, 153, 0.4)';
+      masCtx.setLineDash([4, 4]);
+      masCtx.beginPath();
+      masCtx.moveTo(centerX, centerY - 80);
+      masCtx.lineTo(centerX, centerY + 70);
+      masCtx.stroke();
+      masCtx.setLineDash([]);
+      masCtx.font = '11px sans-serif';
+      masCtx.fillStyle = '#34d399';
+      masCtx.fillText('Equilibrio (x = 0)', centerX - 45, centerY - 90);
+
+      const blockWidth = 70;
+      const blockHeight = 60;
+      const blockX = centerX + (masState.x * scaleX) - (blockWidth / 2);
+      const blockY = centerY + 50 - blockHeight;
+
+      masCtx.strokeStyle = '#38bdf8';
+      masCtx.lineWidth = 3;
+      masCtx.beginPath();
+      masCtx.moveTo(wallX, centerY + 20);
+
+      const numCoils = 16;
+      const springLength = blockX - wallX;
+      for (let i = 0; i <= numCoils; i++) {
+        const segX = wallX + (i / numCoils) * springLength;
+        const segY = (i === 0 || i === numCoils) ? centerY + 20 : (centerY + 20 + ((i % 2 === 1 ? 1 : -1) * 18));
+        masCtx.lineTo(segX, segY);
+      }
+      masCtx.stroke();
+
+      masCtx.fillStyle = masState.isDragging ? '#fbbf24' : '#0284c7';
+      masCtx.strokeStyle = '#38bdf8';
+      masCtx.lineWidth = 2;
+      masCtx.shadowColor = masState.isDragging ? 'rgba(251, 191, 36, 0.5)' : 'rgba(56, 189, 248, 0.4)';
+      masCtx.shadowBlur = 15;
+      masCtx.fillRect(blockX, blockY, blockWidth, blockHeight);
+      masCtx.strokeRect(blockX, blockY, blockWidth, blockHeight);
+      masCtx.shadowBlur = 0;
+
+      masCtx.fillStyle = '#ffffff';
+      masCtx.font = 'bold 13px sans-serif';
+      masCtx.fillText(`m = ${masState.mass}kg`, blockX + 10, blockY + 35);
+    }
+
+
+    /* ========================================================================= */
+    /* 6. CIRCUITS SIMULATION ENGINE                                             */
+    /* ========================================================================= */
+    const circState = { Vs: 24, R1: 6, R2: 12, R3: 8, electronOffset: 0 };
+    const circuitCanvas = document.getElementById('circuitCanvas');
+    const circuitCtx = circuitCanvas.getContext('2d');
+
+    function updateCircuitParams() {
+      circState.Vs = parseFloat(document.getElementById('sliderVs').value);
+      circState.R1 = parseFloat(document.getElementById('sliderR1').value);
+      circState.R2 = parseFloat(document.getElementById('sliderR2').value);
+      circState.R3 = parseFloat(document.getElementById('sliderR3').value);
+
+      document.getElementById('valTagVs').textContent = circState.Vs + ' V';
+      document.getElementById('valTagR1').textContent = circState.R1 + ' \u03A9';
+      document.getElementById('valTagR2').textContent = circState.R2 + ' \u03A9';
+      document.getElementById('valTagR3').textContent = circState.R3 + ' \u03A9';
+
+      calculateCircuitOutputs();
+    }
+
+    function calculateCircuitOutputs() {
+      const Rp = (circState.R2 * circState.R3) / (circState.R2 + circState.R3);
+      const Req = circState.R1 + Rp;
+      const It = circState.Vs / Req;
+      const Ptot = circState.Vs * It;
+
+      document.getElementById('circOutVs').textContent = circState.Vs.toFixed(1);
+      document.getElementById('circOutIt').textContent = It.toFixed(2);
+      document.getElementById('circOutReq').textContent = Req.toFixed(2);
+      document.getElementById('circOutPtot').textContent = Ptot.toFixed(1);
+    }
+
+    function loadCircuitPreset(preset) {
+      document.querySelectorAll('#tab-circuits .chip').forEach(c => c.classList.remove('active'));
+      event.target.classList.add('active');
+      if (preset === 'ex01') {
+        document.getElementById('sliderVs').value = 24; document.getElementById('sliderR1').value = 6;
+        document.getElementById('sliderR2').value = 12; document.getElementById('sliderR3').value = 8;
+      } else if (preset === 'ex02') {
+        document.getElementById('sliderVs').value = 48; document.getElementById('sliderR1').value = 10;
+        document.getElementById('sliderR2').value = 20; document.getElementById('sliderR3').value = 30;
+      } else if (preset === 'ex03') {
+        document.getElementById('sliderVs').value = 36; document.getElementById('sliderR1').value = 4;
+        document.getElementById('sliderR2').value = 8; document.getElementById('sliderR3').value = 8;
+      } else if (preset === 'ex04') {
+        document.getElementById('sliderVs').value = 60; document.getElementById('sliderR1').value = 15;
+        document.getElementById('sliderR2').value = 30; document.getElementById('sliderR3').value = 10;
+      }
+      updateCircuitParams();
+    }
+
+    function drawCircuitSim() {
+      const w = circuitCanvas.width;
+      const h = circuitCanvas.height;
+      circuitCtx.clearRect(0, 0, w, h);
+
+      const xLeft = 120;
+      const xMid = w / 2;
+      const xRight = w - 140;
+      const yTop = 80;
+      const yBottom = h - 80;
+
+      circuitCtx.strokeStyle = '#475569';
+      circuitCtx.lineWidth = 4;
+      circuitCtx.beginPath();
+      circuitCtx.moveTo(xLeft, yTop); circuitCtx.lineTo(xLeft, yBottom);
+      circuitCtx.lineTo(xRight, yBottom); circuitCtx.lineTo(xRight, yTop);
+      circuitCtx.lineTo(xLeft, yTop);
+      circuitCtx.moveTo(xMid, yTop); circuitCtx.lineTo(xMid, yBottom);
+      circuitCtx.stroke();
+
+      const srcY = (yTop + yBottom) / 2;
+      circuitCtx.fillStyle = '#0f172a';
+      circuitCtx.fillRect(xLeft - 25, srcY - 30, 50, 60);
+      circuitCtx.strokeStyle = '#38bdf8';
+      circuitCtx.lineWidth = 3;
+      circuitCtx.strokeRect(xLeft - 25, srcY - 30, 50, 60);
+
+      circuitCtx.fillStyle = '#fbbf24';
+      circuitCtx.font = 'bold 14px sans-serif';
+      circuitCtx.fillText(`+`, xLeft - 6, srcY - 10);
+      circuitCtx.fillStyle = '#94a3b8';
+      circuitCtx.fillText(`-`, xLeft - 4, srcY + 20);
+      circuitCtx.fillStyle = '#ffffff';
+      circuitCtx.fillText(`${circState.Vs}V`, xLeft - 55, srcY + 5);
+
+      function drawResistor(rx, ry, label, val, isVertical, current) {
+        const rw = isVertical ? 24 : 70;
+        const rh = isVertical ? 70 : 24;
+        const power = (current * current) * val;
+        const glowIntensity = Math.min(25, power * 0.4);
+
+        circuitCtx.save();
+        circuitCtx.fillStyle = '#1e293b';
+        circuitCtx.shadowColor = '#f97316';
+        circuitCtx.shadowBlur = glowIntensity;
+        circuitCtx.fillRect(rx - rw/2, ry - rh/2, rw, rh);
+        circuitCtx.strokeStyle = glowIntensity > 10 ? '#f97316' : '#38bdf8';
+        circuitCtx.lineWidth = 2;
+        circuitCtx.strokeRect(rx - rw/2, ry - rh/2, rw, rh);
+        circuitCtx.restore();
+
+        circuitCtx.fillStyle = '#ffffff';
+        circuitCtx.font = 'bold 12px sans-serif';
+        if (isVertical) {
+          circuitCtx.fillText(`${label}: ${val}Ω`, rx + 20, ry + 4);
+          circuitCtx.fillStyle = '#34d399';
+          circuitCtx.fillText(`${current.toFixed(2)}A`, rx + 20, ry + 20);
+        } else {
+          circuitCtx.fillText(`${label}: ${val}Ω`, rx - 25, ry - 18);
+          circuitCtx.fillStyle = '#34d399';
+          circuitCtx.fillText(`${current.toFixed(2)}A`, rx - 20, ry + 32);
+        }
+      }
+
+      const Rp = (circState.R2 * circState.R3) / (circState.R2 + circState.R3);
+      const Req = circState.R1 + Rp;
+      const It = circState.Vs / Req;
+      const Vp = circState.Vs - (It * circState.R1);
+      const I2 = Vp / circState.R2;
+      const I3 = Vp / circState.R3;
+
+      drawResistor((xLeft + xMid) / 2, yTop, 'R1', circState.R1, false, It);
+      drawResistor(xMid, srcY, 'R2', circState.R2, true, I2);
+      drawResistor(xRight, srcY, 'R3', circState.R3, true, I3);
+
+      circState.electronOffset = (circState.electronOffset + (It * 0.8)) % 40;
+      circuitCtx.fillStyle = '#fbbf24';
+      circuitCtx.shadowColor = '#fbbf24';
+      circuitCtx.shadowBlur = 8;
+
+      for (let x = xLeft; x < xMid; x += 40) {
+        const px = x + circState.electronOffset;
+        if (px < xMid) { circuitCtx.beginPath(); circuitCtx.arc(px, yTop, 3.5, 0, Math.PI*2); circuitCtx.fill(); }
+      }
+      for (let x = xMid; x < xRight; x += 40) {
+        const px = x + circState.electronOffset;
+        if (px < xRight) { circuitCtx.beginPath(); circuitCtx.arc(px, yTop, 3.5, 0, Math.PI*2); circuitCtx.fill(); }
+      }
+      for (let y = yTop; y < yBottom; y += 40) {
+        const py = y + (circState.electronOffset * (I2/It));
+        if (py < yBottom) { circuitCtx.beginPath(); circuitCtx.arc(xMid, py, 3.5, 0, Math.PI*2); circuitCtx.fill(); }
+      }
+      for (let y = yTop; y < yBottom; y += 40) {
+        const py = y + (circState.electronOffset * (I3/It));
+        if (py < yBottom) { circuitCtx.beginPath(); circuitCtx.arc(xRight, py, 3.5, 0, Math.PI*2); circuitCtx.fill(); }
+      }
+      for (let x = xRight; x > xLeft; x -= 40) {
+        const px = x - circState.electronOffset;
+        if (px > xLeft) { circuitCtx.beginPath(); circuitCtx.arc(px, yBottom, 3.5, 0, Math.PI*2); circuitCtx.fill(); }
+      }
+      circuitCtx.shadowBlur = 0;
+    }
+
+
+    /* ========================================================================= */
+    /* 7. RESIZE & MAIN LOOP                                                     */
+    /* ========================================================================= */
+    function handleResize() {
+      const wCont = document.getElementById('waveCanvasContainer');
+      if (wCont) { waveCanvas.width = wCont.clientWidth; waveCanvas.height = wCont.clientHeight; }
+      const mCont = document.getElementById('masCanvasContainer');
+      if (mCont) { masCanvas.width = mCont.clientWidth; masCanvas.height = mCont.clientHeight; }
+      const cCont = document.getElementById('circuitCanvasContainer');
+      if (cCont) { circuitCanvas.width = cCont.clientWidth; circuitCanvas.height = cCont.clientHeight; }
+    }
+
+    window.addEventListener('resize', handleResize);
+
+    function mainLoop() {
+      if (currentMainTab === 'waves') drawWaveSim();
+      else if (currentMainTab === 'mas') drawMASSim();
+      else if (currentMainTab === 'circuits') drawCircuitSim();
+      requestAnimationFrame(mainLoop);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      handleResize();
+      updateWaveCalculations();
+      updateMASParams();
+      updateCircuitParams();
+      requestAnimationFrame(mainLoop);
+    });
+  </script>
+</body>
+</html>

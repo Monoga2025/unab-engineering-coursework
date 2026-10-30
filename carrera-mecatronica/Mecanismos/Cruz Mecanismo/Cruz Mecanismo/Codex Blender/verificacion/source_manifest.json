@@ -1,0 +1,38 @@
+﻿[
+    {
+        "file":  "Base Ginebra.SLDPRT",
+        "bytes":  66818,
+        "sha256":  "F1CE8E3FC6D34EB01C455C7E009E1DE0AF1C2BAE34CD45481CC84BD74BA95C86",
+        "matches_original":  true
+    },
+    {
+        "file":  "Documento_Tecnico_Mecanismo_Ginebra.pdf",
+        "bytes":  556904,
+        "sha256":  "09145A8FACD04E3F5A2828F60319B26E27FD136FEAFD5259F08D81DFA0D42A59",
+        "matches_original":  true
+    },
+    {
+        "file":  "Ensamblaje1.SLDASM",
+        "bytes":  2832217,
+        "sha256":  "197E04456F7C8799041ED1D21DEC884AD2BAC5B5853A9E8B7E643E24397EF76B",
+        "matches_original":  true
+    },
+    {
+        "file":  "Video funcional.avi",
+        "bytes":  1313725952,
+        "sha256":  "6666A704EF038624954B807ACF30D1EEE43D6780090D26657F5A7F3F45F37ABF",
+        "matches_original":  true
+    },
+    {
+        "file":  "Mecanizmo arreglado\\Circulo.SLDPRT",
+        "bytes":  89143,
+        "sha256":  "F98AB425C1C25351A84ADD526B12D2354B72EADE36D0A7A45EA1B8117F684CBC",
+        "matches_original":  true
+    },
+    {
+        "file":  "Mecanizmo arreglado\\Cruz.SLDPRT",
+        "bytes":  121275,
+        "sha256":  "570F9B2E0EF8F557C2527153E05712FC435175250A63E18F39691BCE2A8A397B",
+        "matches_original":  true
+    }
+]
